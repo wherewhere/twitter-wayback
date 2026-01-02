@@ -1,0 +1,181 @@
+@use "sass:color";
+
+/** Colors */
+
+$system-accent-color: #007dcf;
+$system-accent-color-dark1: #0064b2;
+$system-accent-color-dark2: #00448d;
+$system-accent-color-dark3: #002063;
+$system-accent-color-light1: #0099f3;
+$system-accent-color-light2: #51d2ff;
+$system-accent-color-light3: #86efff;
+
+/** Light */
+
+$system-alt-high-color: #FFFFFFFF;
+$system-alt-low-color: #FFFFFF33;
+$system-alt-medium-color: #FFFFFF99;
+$system-alt-medium-high-color: #FFFFFFCC;
+$system-alt-medium-low-color: #FFFFFF66;
+$system-base-high-color: #000000FF;
+$system-base-low-color: #00000033;
+$system-base-medium-color: #00000099;
+$system-base-medium-high-color: #000000CC;
+$system-base-medium-low-color: #00000066;
+$system-chrome-alt-low-color: #171717FF;
+$system-chrome-black-high-color: #000000FF;
+$system-chrome-black-low-color: #00000033;
+$system-chrome-black-medium-low-color: #00000066;
+$system-chrome-black-medium-color: #000000CC;
+$system-chrome-disabled-high-color: #CCCCCCFF;
+$system-chrome-disabled-low-color: #7A7A7AFF;
+$system-chrome-high-color: #CCCCCCFF;
+$system-chrome-low-color: #F2F2F2FF;
+$system-chrome-medium-color: #E6E6E6FF;
+$system-chrome-medium-low-color: #F2F2F2FF;
+$system-chrome-white-color: #FFFFFFFF;
+$system-chrome-gray-color: #767676FF;
+$system-list-low-color: #00000019;
+$system-list-medium-color: #00000033;
+$system-error-text-color: #C50500;
+
+$text-fill-color-primary: #000000E4;
+$text-fill-color-secondary: #0000009E;
+$text-fill-color-tertiary: #00000072;
+$text-fill-color-disabled: #0000005C;
+$text-fill-color-inverse: #FFFFFF;
+
+$accent-text-fill-color-primary: $system-accent-color-dark2;
+$accent-text-fill-color-secondary: $system-accent-color-dark3;
+$accent-text-fill-color-tertiary: $system-accent-color-dark1;
+$accent-text-fill-color-disabled: #0000005C;
+
+$text-on-accent-fill-color-selected-text: #FFFFFF;
+
+$text-on-accent-fill-color-primary: #FFFFFF;
+$text-on-accent-fill-color-secondary: #FFFFFFB3;
+$text-on-accent-fill-color-disabled: #FFFFFF;
+
+$control-fill-color-default: #FFFFFFB3;
+$control-fill-color-secondary: #F9F9F980;
+$control-fill-color-tertiary: #F9F9F94D;
+$control-fill-color-disabled: #F9F9F94D;
+$control-fill-color-transparent: #FFFFFF00;
+$control-fill-color-input-active: #FFFFFF;
+
+$control-strong-fill-color-default: #00000072;
+$control-strong-fill-color-disabled: #00000051;
+
+$control-solid-fill-color-default: #FFFFFF;
+
+$subtle-fill-color-transparent: #FFFFFF00;
+$subtle-fill-color-secondary: #00000009;
+$subtle-fill-color-tertiary: #00000006;
+$subtle-fill-color-disabled: #FFFFFF00;
+
+$control-alt-fill-color-transparent: #FFFFFF00;
+$control-alt-fill-color-secondary: #00000006;
+$control-alt-fill-color-tertiary: #0000000F;
+$control-alt-fill-color-quarternary: #00000018;
+$control-alt-fill-color-disabled: #FFFFFF00;
+
+$control-on-image-fill-color-default: #FFFFFFC9;
+$control-on-image-fill-color-secondary: #F3F3F3;
+$control-on-image-fill-color-tertiary: #EBEBEB;
+$control-on-image-fill-color-disabled: #FFFFFF00;
+
+$accent-fill-color-default: $system-accent-color-dark1;
+$accent-fill-color-secondary: color.change($system-accent-color-dark1, $alpha: 0.9);
+$accent-fill-color-tertiary: color.change($system-accent-color-dark1, $alpha: 0.8);
+$accent-fill-color-disabled: #00000037;
+
+$control-stroke-color-default: #0000000F;
+$control-stroke-color-secondary: #00000029;
+$control-stroke-color-on-accent-default: #FFFFFF14;
+$control-stroke-color-on-accent-secondary: #00000066;
+$control-stroke-color-on-accent-tertiary: #00000037;
+$control-stroke-color-on-accent-disabled: #0000000F;
+
+$control-stroke-color-for-strong-fill-when-on-image: #FFFFFF59;
+
+$card-stroke-color-default: #0000000F;
+$card-stroke-color-default-solid: #EBEBEB;
+
+$control-strong-stroke-color-default: #00000072;
+$control-strong-stroke-color-disabled: #00000037;
+
+$surface-stroke-color-default: #75757566;
+$surface-stroke-color-flyout: #0000000F;
+$surface-stroke-color-inverse: #FFFFFF15;
+
+$divider-stroke-color-default: #0000000F;
+
+$focus-stroke-color-outer: #000000E4;
+$focus-stroke-color-inner: #FFFFFFB3;
+
+$card-background-fill-color-default: #FFFFFFB3;
+$card-background-fill-color-secondary: #F6F6F680;
+
+$smoke-fill-color-default: #0000004D;
+
+$layer-fill-color-default: #FFFFFF80;
+$layer-fill-color-alt: #FFFFFF;
+$layer-on-acrylic-fill-color-default: #FFFFFF40;
+$layer-on-accent-acrylic-fill-color-default: #FFFFFF40;
+
+$layer-on-mica-base-alt-fill-color-default: #FFFFFFB3;
+$layer-on-mica-base-alt-fill-color-secondary: #0000000A;
+$layer-on-mica-base-alt-fill-color-tertiary: #F9F9F9;
+$layer-on-mica-base-alt-fill-color-transparent: #00000000;
+
+$solid-background-fill-color-base: #F3F3F3;
+$solid-background-fill-color-secondary: #EEEEEE;
+$solid-background-fill-color-tertiary: #F9F9F9;
+$solid-background-fill-color-quarternary: #FFFFFF;
+$solid-background-fill-color-transparent: #F3F3F300;
+$solid-background-fill-color-base-alt: #DADADA;
+
+$system-fill-color-success: #0F7B0F;
+$system-fill-color-caution: #9D5D00;
+$system-fill-color-critical: #C42B1C;
+$system-fill-color-neutral: #00000072;
+$system-fill-color-solid-neutral: #8A8A8A;
+$system-fill-color-attention-background: #F6F6F680;
+$system-fill-color-success-background: #DFF6DD;
+$system-fill-color-caution-background: #FFF4CE;
+$system-fill-color-critical-background: #FDE7E9;
+$system-fill-color-neutral-background: #00000006;
+$system-fill-color-solid-attention-background: #F7F7F7;
+$system-fill-color-solid-neutral-background: #F3F3F3;
+
+$text-on-accent-fill-color-default: #FFFFFF;
+$text-on-accent-a-a-fill-color-primary: #FFFFFF;
+$text-on-accent-a-a-fill-color-secondary: #FFFFFFB3;
+$text-on-accent-a-a-fill-color-disabled: #FFFFFF;
+$control-a-a-fill-color-default: #00000072;
+$control-a-a-fill-color-disabled: #00000051;
+$accent-a-a-fill-color-disabled: #00000037;
+$control-stroke-color-for-a-a-fill-on-image: #FFFFFF59;
+$control-a-a-stroke-color-default: #00000072;
+$control-a-a-stroke-color-disabled: #00000037;
+
+/** Common */
+
+$control-corner-radius: 4px;
+$overlay-corner-radius: 8px;
+
+/** Font Size */
+
+$content-control-font-size: 14px;
+
+$text-style-large-font-size: 18.14px;
+$text-style-extra-large-font-size: 25.5px;
+
+$pivot-header-item-font-size: 24px;
+
+$caption-text-block-font-size: 12px;
+$body-text-block-font-size: 14px;
+$subtitle-text-block-font-size: 20px;
+$title-text-block-font-size: 28px;
+$title-large-text-block-font-size: 40px;
+$display-text-block-font-size: 68px;

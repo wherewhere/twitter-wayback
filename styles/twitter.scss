@@ -1,0 +1,129 @@
+@mixin twitter {
+    .tweet-author {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-bottom: 0.75rem;
+    }
+
+    .tweet-author-profile-image img {
+        width: 48px;
+        max-width: 48px;
+        height: 48px;
+        max-height: 48px;
+        overflow: hidden;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+
+    .tweet-author-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tweet-author-name {
+        font-weight: bold;
+    }
+
+    .tweet-content {
+        display: flex;
+        font-size: 1.25rem;
+        flex-direction: column;
+    }
+
+    .tweet-image {
+        max-width: 100%;
+        height: auto;
+        margin-top: 12px;
+        border-radius: 12px;
+    }
+
+    .embedded-tweet-container {
+        box-sizing: border-box;
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid #cfd9de;
+        border-radius: 12px;
+        background-color: white;
+        max-width: 100%;
+    }
+
+    .date {
+        font-size: 0.75rem;
+        color: #657786;
+        margin-top: 12px;
+
+        a {
+            color: #657786;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .tweet-author {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-bottom: 0.75rem;
+    }
+
+    .tweet-author-profile-image img {
+        width: 48px;
+        max-width: 48px;
+        height: 48px;
+        max-height: 48px;
+        overflow: hidden;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+
+    .tweet-author-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tweet-author-name {
+        font-weight: bold;
+    }
+
+    .tweet-content {
+        display: flex;
+        font-size: 1.25rem;
+        flex-direction: column;
+    }
+
+    .tweet-image {
+        max-width: 100%;
+        height: auto;
+        margin-top: 12px;
+        border-radius: 12px;
+    }
+
+    .embedded-tweet-container {
+        box-sizing: border-box;
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid #cfd9de;
+        border-radius: 12px;
+        background-color: white;
+        max-width: 100%;
+    }
+
+    .date {
+        font-size: 0.75rem;
+        color: #657786;
+        margin-top: 12px;
+
+        a {
+            color: #657786;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

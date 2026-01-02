@@ -1,0 +1,39 @@
+{
+  "name": "twitter-wayback",
+  "version": "0.0.1",
+  "description": "Get Twitter archive pages from Wayback Machine",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [
+    "Twitter",
+    "Wayback"
+  ],
+  "homepage": "https://github.com/wherewhere/twitter-wayback",
+  "bugs": {
+    "url": "https://github.com/wherewhere/twitter-wayback/issues"
+  },
+  "license": "GPL-3.0",
+  "author": "wherewhere7",
+  "contributors": [
+    "wherewhere"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wherewhere/twitter-wayback.git"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "cssnano": "^7.0.0",
+    "cssnano-preset-advanced": "^7.0.0",
+    "sass": "^1.0.0",
+    "vite": "^7.0.0",
+    "vite-plugin-simple-html": "^1.0.0"
+  },
+  "dependencies": {
+    "@unhead/vue": "^2.0.0",
+    "vue": "^3.0.0"
+  }
+}
