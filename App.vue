@@ -1,7 +1,8 @@
 <template>
     <div class="stack-vertical" style="row-gap: 8px; align-items: stretch;">
         <div class="stack-horizontal" style="column-gap: 8px; justify-content: space-between;">
-            <input name="username" v-model="username" type="text" placeholder="wherewhere7" style="flex: 1;" />
+            <input name="username" v-model="username" type="text" placeholder="wherewhere7"
+                @keyup.enter="() => getPosts(username)" style="flex: 1;" />
             <button @click="() => getPosts(username)" :disabled="!username || isLoading">Fetch</button>
         </div>
         <div v-if="isLoading">
@@ -34,6 +35,7 @@ const isLoading = shallowRef(false);
 let source: InstanceType<typeof WaybackItem>[] = [];
 const posts = ref<InstanceType<typeof WaybackItem>[]>([]);
 async function getPosts(username: string) {
+    if (isLoading.value) { return; }
     isLoading.value = true;
     try {
         window.location.hash = username;

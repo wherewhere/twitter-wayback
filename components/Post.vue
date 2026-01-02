@@ -1,20 +1,39 @@
 <template>
-    <a :class="['container', container]" :href="post.wayback" target="_blank" ref="card">
+    <div :class="['container', container]" @contextmenu="contextmenu" ref="card">
         <div id="nonjsonview">
             <div class="tweet-content">
                 {{ post.original }}
             </div>
         </div>
-    </a>
+    </div>
+    <div class="context-menu" :style="style">
+        <a :href="post.wayback" target="_blank">Wayback</a>
+    </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef, useTemplateRef } from "vue";
+import { onMounted, shallowRef, useTemplateRef, type StyleValue } from "vue";
 import { type WaybackItem } from "../helpers/wayback";
 
 const { post } = defineProps<{
     post: InstanceType<typeof WaybackItem>
 }>();
+
+const style = shallowRef<StyleValue>({});
+function contextmenu(event: PointerEvent) {
+    const target = event.target;
+    if (target instanceof HTMLDivElement) {
+        event.preventDefault();
+        style.value = {
+            display: "flex",
+            left: `${event.pageX}px`,
+            top: `${event.pageY}px`
+        };
+    }
+}
+
+document.addEventListener("click", () => style.value = {});
+
 const card = useTemplateRef("card");
 
 const container = shallowRef<string>();
@@ -80,6 +99,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+@use "../styles/colors.scss";
 @use "../styles/twitter" as *;
 @use "../styles/twitter_core" as *;
 @use "../styles/twitter_more" as *;
@@ -89,9 +109,9 @@ onMounted(async () => {
     flex: 1;
     font-family: Helvetica, Arial, sans-serif;
     display: flex;
-    border: 1px solid #cfd9de;
+    border: 1px solid colors.$card-stroke-color-default;
     border-radius: 12px;
-    background-color: white;
+    background-color: colors.$card-background-fill-color-default;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
@@ -100,6 +120,37 @@ onMounted(async () => {
     max-width: 100%;
     box-sizing: border-box;
     word-wrap: break-word;
+}
+
+.context-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    background-color: colors.$solid-background-fill-color-tertiary;
+    min-width: 96px;
+    min-height: 32px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2), 0 16px 32px rgba(0, 0, 0, 0.24);
+    padding: 2px 0;
+    border-radius: colors.$overlay-corner-radius;
+    z-index: 999;
+
+    >a {
+        background-color: transparent;
+        color: colors.$text-fill-color-primary;
+        font-size: colors.$content-control-font-size;
+        border-radius: colors.$control-corner-radius;
+        padding: 8px 11px;
+        margin: 2px 4px;
+        text-decoration: none;
+
+        &:hover {
+            background-color: colors.$solid-background-fill-color-secondary;
+        }
+
+        &:active {
+            background-color: colors.$solid-background-fill-color-tertiary;
+        }
+    }
 }
 
 .tweet-container {
