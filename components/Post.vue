@@ -1,9 +1,7 @@
 <template>
     <div :class="['container', container]" @contextmenu="contextmenu" ref="card">
-        <div id="nonjsonview">
-            <div class="tweet-content">
-                {{ post.original }}
-            </div>
+        <div style="padding: 12px 16px;">
+            {{ post.original }}
         </div>
     </div>
     <div class="context-menu" :style="style">
@@ -22,7 +20,7 @@ const { post } = defineProps<{
 const style = shallowRef<StyleValue>({});
 function contextmenu(event: PointerEvent) {
     const target = event.target;
-    if (target instanceof HTMLDivElement) {
+    if (target instanceof HTMLDivElement && !getSelection()?.toString()) {
         event.preventDefault();
         style.value = {
             display: "flex",
@@ -38,12 +36,23 @@ const card = useTemplateRef("card");
 
 const container = shallowRef<string>();
 
+function changeUrl(content: Element) {
+    const hrefs = content.querySelectorAll("[href]");
+    for (const href of hrefs) {
+        const original = href.getAttribute("href");
+        if (original?.startsWith("/web/")) {
+            href.setAttribute("href", `https://web.archive.org${original}`);
+        }
+    }
+}
+
 async function getCard({ wayback, mimetype }: { wayback: string, mimetype: string }) {
     if (mimetype === "application/json") {
         const html = await fetch(wayback).then(res => res.text());
         const document = new DOMParser().parseFromString(html, "text/html");
         const content = document.getElementById("nonjsonview");
         if (content) {
+            changeUrl(content);
             container.value = "tweet-container";
             card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
         }
@@ -53,14 +62,24 @@ async function getCard({ wayback, mimetype }: { wayback: string, mimetype: strin
         const document = new DOMParser().parseFromString(html, "text/html");
         const content = document.querySelector(".permalink-tweet-container .js-original-tweet");
         if (content) {
+            changeUrl(content);
             container.value = "tweet-desktop-container";
             card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
         }
         else {
-            container.value = "tweet-mobile-container";
             const content = document.querySelector("meta[itemprop='mainEntityOfPage']~div>article");
             if (content) {
+                changeUrl(content);
+                container.value = "tweet-mobile-container";
                 card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
+            }
+            else {
+                const content = document.querySelector("article[data-testid='tweet']");
+                if (content) {
+                    changeUrl(content);
+                    container.value = "tweet-mobile-container";
+                    card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
+                }
             }
         }
     }

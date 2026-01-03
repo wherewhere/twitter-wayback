@@ -12038,25 +12038,29 @@
     }
 
     .AdaptiveMedia-video {
-        width: 506px
+        width: 506px;
+        max-width: 100%
     }
 
     .AdaptiveMedia-doublePhoto {
         font-size: 0;
         height: 253px;
-        width: 506px
+        width: 506px;
+        max-width: 100%
     }
 
     .AdaptiveMedia-triplePhoto {
         font-size: 0;
         height: 337.3333333333333px;
-        width: 506px
+        width: 506px;
+        max-width: 100%
     }
 
     .AdaptiveMedia-quadPhoto {
         font-size: 0;
         height: 379.5px;
-        width: 506px
+        width: 506px;
+        max-width: 100%
     }
 
     .AdaptiveMedia-halfWidthPhoto {

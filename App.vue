@@ -10,18 +10,51 @@
                 <circle class="indeterminate-indicator" cx="8px" cy="8px" r="7px"></circle>
             </svg>
         </div>
-        <div v-else class="masonry">
+        <div v-else-if="posts.length" class="masonry">
             <div v-for="value in posts">
                 <Post :post="value" />
             </div>
+        </div>
+        <div v-else-if="error">
+            Error fetching posts:<br />
+            {{ error }}
+        </div>
+        <div v-else>
+            Enter a Twitter username and click "Fetch" to load archived posts.
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref, shallowRef } from "vue";
+import { useSeoMeta } from "@unhead/vue";
+import { name, description, keywords } from "./package.json";
 import { getTwitterPosts, type WaybackItem } from "./helpers/wayback";
 import Post from "./components/Post.vue";
+
+const author = "wherewhere";
+const meta = useSeoMeta({
+    // Basic SEO
+    title: name,
+    description,
+    author: author,
+    keywords: keywords.join(", "),
+
+    // Open Graph
+    ogTitle: name,
+    ogDescription: description,
+    ogType: "website",
+    ogLocale: "en-US",
+    ogSiteName: name,
+
+    // Twitter
+    twitterCard: "summary",
+    twitterSite: "@wherewhere7",
+
+    // Product specific (structured data will be generated)
+    articleAuthor: [author],
+    articleTag: keywords
+});
 
 function getUsername() {
     const hash = window.location.hash.slice(1);
@@ -30,23 +63,40 @@ function getUsername() {
 
 const username = shallowRef(getUsername());
 addEventListener("hashchange", () => username.value = getUsername());
+function saveUserName(username: string) {
+    window.location.hash = username;
+    meta.patch({
+        // Basic SEO
+        title: username ? `${username} | ${name}` : name,
+
+        // Open Graph
+        ogTitle: username || name,
+        ogSiteName: name
+    });
+}
 
 const isLoading = shallowRef(false);
 let source: InstanceType<typeof WaybackItem>[] = [];
+const error = ref<unknown>();
 const posts = ref<InstanceType<typeof WaybackItem>[]>([]);
 async function getPosts(username: string) {
     if (isLoading.value) { return; }
     isLoading.value = true;
     try {
-        window.location.hash = username;
+        saveUserName(username);
+        error.value = undefined;
         source = [];
         posts.value = [];
         for await (const post of getTwitterPosts(username)) {
             source.push(post);
         }
-        const count = Math.floor((window.innerWidth / 420)) * Math.floor(window.innerHeight / 200);
+        const count = Math.max(3, Math.floor(window.innerHeight / 200) * Math.floor((window.innerWidth / 420)));
         posts.value.push(...source.slice(0, count));
         source = source.slice(count);
+    }
+    catch (e) {
+        console.error(e);
+        error.value = e;
     }
     finally {
         isLoading.value = false;
@@ -73,6 +123,9 @@ onMounted(() => {
 
 body {
     background: colors.$solid-background-fill-color-base;
+    font-size: colors.$content-control-font-size;
+    color: colors.$text-fill-color-primary;
+    font-family: colors.$body-font;
 }
 </style>
 
