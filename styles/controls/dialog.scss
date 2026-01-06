@@ -1,0 +1,72 @@
+@use "../colors" as *;
+
+$content-dialog-foreground: $text-fill-color-primary;
+$content-dialog-background: $solid-background-fill-color-base;
+$content-dialog-smoke-fill: $smoke-fill-color-default;
+$content-dialog-top-overlay: $layer-fill-color-alt;
+$content-dialog-border: $surface-stroke-color-default;
+$content-dialog-separator-border: $card-stroke-color-default;
+$content-dialog-border-width: 1px;
+
+$content-dialog-min-width: 320px;
+$content-dialog-max-width: 548px;
+$content-dialog-min-height: 184px;
+$content-dialog-max-height: 756px;
+
+$content-dialog-button-spacing: 8px;
+$content-dialog-title-margin-bottom: 12px;
+$content-dialog-padding: 24px;
+$content-dialog-separator-thickness: 1px;
+
+dialog {
+    scale: 1.05;
+    opacity: 0;
+    display: none;
+    flex-direction: column;
+    min-width: $content-dialog-min-width;
+    max-width: min(100vw, $content-dialog-max-width);
+    min-height: $content-dialog-min-height;
+    max-height: min(100vh, $content-dialog-max-height);
+    box-sizing: border-box;
+    overflow: auto;
+    color: $content-dialog-foreground;
+    fill: currentColor;
+    background: $content-dialog-background;
+    border: $content-dialog-border-width solid $content-dialog-border;
+    border-radius: $overlay-corner-radius;
+    padding: 0;
+    transition: scale 0.083s cubic-bezier(0, 0, 0, 1), opacity 0.083s linear, display 0.083s allow-discrete, overlay 0.083s allow-discrete;
+
+    @media screen and (max-width: $content-dialog-min-width) {
+        min-width: 0;
+    }
+
+    @media screen and (max-height: $content-dialog-min-height) {
+        min-height: 0;
+    }
+
+    &::backdrop {
+        opacity: 0;
+        background: $content-dialog-smoke-fill;
+        transition: opacity 0.083s linear;
+    }
+
+    &[open] {
+        scale: 1;
+        opacity: 1;
+        display: flex;
+
+        @starting-style {
+            scale: 1.05;
+            opacity: 1;
+        }
+
+        &::backdrop {
+            opacity: 1;
+
+            @starting-style {
+                opacity: 0;
+            }
+        }
+    }
+}

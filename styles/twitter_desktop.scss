@@ -1,0 +1,9 @@
+@use "./twitter_core" as *;
+@use "./twitter_more" as *;
+@use "./user_style" as *;
+
+@mixin twitter-desktop {
+    @include twitter-core;
+    @include twitter-more;
+    @include user-style;
+}

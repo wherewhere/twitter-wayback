@@ -1,5 +1,16 @@
 @use "../colors" as *;
 
+$accent-button-background: $accent-fill-color-default;
+$accent-button-background-pointer-over: $accent-fill-color-secondary;
+$accent-button-background-pressed: $accent-fill-color-tertiary;
+$accent-button-background-disabled: $accent-fill-color-disabled;
+$accent-button-foreground: $text-on-accent-fill-color-primary;
+$accent-button-foreground-pointer-over: $text-on-accent-fill-color-primary;
+$accent-button-foreground-pressed: $text-on-accent-fill-color-secondary;
+$accent-button-foreground-disabled: $text-on-accent-fill-color-disabled;
+$accent-button-border-pressed: $control-fill-color-transparent;
+$accent-button-border-disabled: $control-fill-color-transparent;
+
 $button-background: $control-fill-color-default;
 $button-background-pointer-over: $control-fill-color-secondary;
 $button-background-pressed: $control-fill-color-tertiary;
@@ -8,8 +19,8 @@ $button-foreground: $text-fill-color-primary;
 $button-foreground-pointer-over: $text-fill-color-primary;
 $button-foreground-pressed: $text-fill-color-secondary;
 $button-foreground-disabled: $text-fill-color-disabled;
-$button-border-brush-pressed: $control-stroke-color-default;
-$button-border-brush-disabled: $control-stroke-color-default;
+$button-border-pressed: $control-stroke-color-default;
+$button-border-disabled: $control-stroke-color-default;
 
 $button-border-theme-thickness: 1px;
 $button-padding: 6px 11px;
@@ -21,6 +32,7 @@ input[type="submit"],
 select {
     padding: $button-padding;
     color: $button-foreground;
+    fill: currentColor;
     border-radius: $control-corner-radius;
     background: padding-box $button-background;
     border-left: $button-border-theme-thickness solid $control-stroke-color-default;
@@ -36,12 +48,38 @@ select {
     &:not(:disabled):active {
         color: $button-foreground-pressed;
         background: padding-box $button-background-pressed;
-        border: $button-border-theme-thickness solid $button-border-brush-pressed;
+        border: $button-border-theme-thickness solid $button-border-pressed;
     }
 
     &:disabled {
         color: $button-foreground-disabled;
         background: padding-box $button-background-disabled;
-        border: $button-border-theme-thickness solid $button-border-brush-disabled;
+        border: $button-border-theme-thickness solid $button-border-disabled;
+    }
+
+    &.accent {
+        color: $accent-button-foreground;
+        background: $accent-button-background;
+        border-left: $button-border-theme-thickness solid $control-stroke-color-on-accent-default;
+        border-top: $button-border-theme-thickness solid $control-stroke-color-on-accent-default;
+        border-right: $button-border-theme-thickness solid $control-stroke-color-on-accent-default;
+        border-bottom: $button-border-theme-thickness solid $control-stroke-color-on-accent-secondary;
+
+        &:not(:disabled):hover {
+            color: $accent-button-foreground-pointer-over;
+            background: $accent-button-background-pointer-over;
+        }
+
+        &:not(:disabled):active {
+            color: $accent-button-foreground-pressed;
+            background: $accent-button-background-pressed;
+            border: $button-border-theme-thickness solid $accent-button-border-pressed;
+        }
+
+        &:disabled {
+            color: $accent-button-foreground-disabled;
+            background: $accent-button-background-disabled;
+            border: $button-border-theme-thickness solid $accent-button-border-disabled;
+        }
     }
 }

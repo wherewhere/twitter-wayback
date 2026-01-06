@@ -60,26 +60,18 @@ async function getCard({ wayback, mimetype }: { wayback: string, mimetype: strin
     else {
         const html = await fetch(wayback).then(res => res.text());
         const document = new DOMParser().parseFromString(html, "text/html");
-        const content = document.querySelector(".permalink-tweet-container .js-original-tweet");
+        const content = document.querySelector(".original-permalink-page");
         if (content) {
             changeUrl(content);
             container.value = "tweet-desktop-container";
             card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
         }
         else {
-            const content = document.querySelector("meta[itemprop='mainEntityOfPage']~div>article");
+            const content = document.querySelector("main");
             if (content) {
                 changeUrl(content);
                 container.value = "tweet-mobile-container";
                 card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
-            }
-            else {
-                const content = document.querySelector("article[data-testid='tweet']");
-                if (content) {
-                    changeUrl(content);
-                    container.value = "tweet-mobile-container";
-                    card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
-                }
             }
         }
     }
@@ -120,9 +112,8 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @use "../styles/colors.scss";
 @use "../styles/twitter" as *;
-@use "../styles/twitter_core" as *;
-@use "../styles/twitter_more" as *;
 @use "../styles/twitter_mobile" as *;
+@use "../styles/twitter_desktop" as *;
 
 .container {
     flex: 1;
@@ -186,14 +177,17 @@ onMounted(async () => {
             display: none;
         }
 
-        @include twitter-core();
-        @include twitter-more();
+        @include twitter-desktop();
     }
 }
 
 .tweet-mobile-container {
     :deep() {
         @include twitter-mobile();
+
+        .r-o52ifk {
+            display: none;
+        }
     }
 }
 </style>

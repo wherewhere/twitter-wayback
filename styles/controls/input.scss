@@ -6,7 +6,7 @@ $text-control-background: $control-fill-color-default;
 $text-control-background-pointer-over: $control-fill-color-secondary;
 $text-control-background-focused: $control-fill-color-input-active;
 $text-control-background-disabled: $control-fill-color-disabled;
-$text-control-border-brush-disabled: $control-stroke-color-default;
+$text-control-border-disabled: $control-stroke-color-default;
 $text-control-foreground: $text-fill-color-primary;
 $text-control-foreground-pointer-over: $text-fill-color-primary;
 $text-control-foreground-focused: $text-fill-color-primary;
@@ -31,6 +31,7 @@ input[type="url"],
 textarea {
     padding: 6px;
     color: $text-control-foreground;
+    fill: currentColor;
     background: $text-control-background;
     border-radius: $control-corner-radius;
     border-left: $text-control-border-theme-thickness solid $control-stroke-color-default;
@@ -55,6 +56,6 @@ textarea {
     &:disabled {
         color: $text-control-foreground-disabled;
         background: $text-control-background-disabled;
-        border: $text-control-border-theme-thickness solid $text-control-border-brush-disabled;
+        border: $text-control-border-theme-thickness solid $text-control-border-disabled;
     }
 }

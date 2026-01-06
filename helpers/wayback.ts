@@ -4,7 +4,9 @@ function getApi(params: Record<string, string> & Partial<{
     collapse: string,
     output: string,
     fl: string,
-    filter: string
+    filter: string,
+    from?: string,
+    to?: string
 }>) {
     const url = new URL("https://web.archive.org/web/timemap/json");
     url.search = new URLSearchParams(params).toString();
@@ -38,16 +40,19 @@ export class WaybackItem {
     };
 }
 
-export async function* getTwitterPosts(username: string) {
+export async function* getTwitterPosts(username: string, from?: string, to?: string) {
     if (!username) { return; }
-    const url = getApi({
+    const params: Parameters<typeof getApi>[0] = {
         url: `twitter.com/${username}/status/`,
         matchType: "prefix",
         collapse: "urlkey",
         output: "json",
         fl: "original,mimetype,timestamp,groupcount",
         filter: "!statuscode:[45].."
-    });
+    }
+    if (from) { params.from = from; }
+    if (to) { params.to = to; }
+    const url = getApi(params);
     const data: string[][] | undefined = await fetch(url).then(r => r.json());
     if (Array.isArray(data)) {
         for (const item of data.slice(1)) {
