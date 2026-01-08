@@ -141,7 +141,6 @@ const meta = useSeoMeta({
 function getDateString(date?: string) {
     if (!date) { return; }
     const d = new Date(date);
-    console.log(d);
     return `${d.getUTCFullYear().toString().padStart(2, '0')}${(d.getUTCMonth() + 1).toString().padStart(2, '0')}${d.getUTCDate().toString().padStart(2, '0')}`;
 }
 
@@ -159,8 +158,8 @@ function getSettings() {
     const hash = location.hash.substring(1);
     if (hash) {
         const params = new URLSearchParams(hash);
-        if (params.has("username")) {
-            username.value = params.get("username")!;
+        if (params.has("user")) {
+            username.value = params.get("user")!;
         }
         if (params.has("sort")) {
             sortOrder.value = params.get("sort") as "oldest" | "newest";
@@ -180,7 +179,7 @@ function setSettings() {
         if (username.value.includes('/')) {
             username.value = popString(username.value.split('/')) || '';
         }
-        settings.username = username.value;
+        settings.user = username.value;
     }
     if (sortOrder.value === "newest") {
         settings.sort = sortOrder.value;
