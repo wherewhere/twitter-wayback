@@ -95,6 +95,7 @@ import { onMounted, ref, shallowRef, useTemplateRef, watchEffect } from "vue";
 import { useSeoMeta } from "@unhead/vue";
 import { name, description, keywords } from "./package.json";
 import { getTwitterPosts, type WaybackItem } from "./helpers/wayback";
+import { popString } from "./helpers/utils";
 import ContentDialog from "./components/ContentDialog.vue";
 import SettingsCard from "./components/SettingsCard.vue";
 import Post from "./components/Post.vue";
@@ -177,7 +178,7 @@ function setSettings() {
     const settings: Record<string, string> = {};
     if (username.value) {
         if (username.value.includes('/')) {
-            username.value = username.value.split('/').filter(part => !!part).pop() || '';
+            username.value = popString(username.value.split('/')) || '';
         }
         settings.username = username.value;
     }
@@ -219,7 +220,10 @@ async function getPosts(username: string) {
             source.push(post);
         }
         if (sortOrder.value === "newest") {
-            source = source.reverse();
+            source = source.reverse().sort((a, b) => b.id - a.id);
+        }
+        else {
+            source = source.sort((a, b) => a.id - b.id);
         }
         const count = Math.max(3, Math.floor(window.innerHeight / 200) * Math.floor((window.innerWidth / 420)));
         posts.value.push(...source.slice(0, count));
@@ -283,6 +287,7 @@ h1.unset {
 input,
 section {
     min-width: 0;
+    width: auto;
 }
 
 .stack-vertical {
