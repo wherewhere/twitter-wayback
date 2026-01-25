@@ -179,6 +179,15 @@ onMounted(async () => {
             display: none;
         }
 
+        .AdaptiveMedia-photoContainer {
+            display: flex;
+            align-items: center;
+
+            >img {
+                top: auto !important;
+            }
+        }
+
         .permalink-header {
             &:has(>.follow-bar:first-child) {
                 flex-direction: row-reverse;
