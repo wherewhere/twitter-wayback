@@ -1,11 +1,11 @@
 <template>
     <div :class="['container', container]" @contextmenu="contextmenu" ref="card">
-        <div style="padding: 12px 16px;">
+        <a :href="post.wayback" style="padding: 12px 16px;">
             {{ post.original }}
+        </a>
+        <div class="context-menu" :style="style">
+            <a :href="post.wayback" target="_blank">Wayback</a>
         </div>
-    </div>
-    <div class="context-menu" :style="style">
-        <a :href="post.wayback" target="_blank">Wayback</a>
     </div>
 </template>
 
@@ -87,7 +87,7 @@ onMounted(async () => {
                     try {
                         const wayback = `https://web.archive.org/web/${timestamp}if_/${original}`;
                         getCard({ wayback, mimetype });
-                        break;
+                        return;
                     }
                     catch { }
                 }
@@ -96,16 +96,17 @@ onMounted(async () => {
                     try {
                         const wayback = `https://web.archive.org/web/${timestamp}if_/${original}`;
                         getCard({ wayback, mimetype });
-                        break;
+                        return;
                     }
                     catch { }
                 }
-                return;
             }
         }
         catch { }
     }
-    getCard(post);
+    else {
+        getCard(post);
+    }
 });
 </script>
 
@@ -130,37 +131,6 @@ onMounted(async () => {
     max-width: 100%;
     box-sizing: border-box;
     word-wrap: break-word;
-}
-
-.context-menu {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    background-color: colors.$solid-background-fill-color-tertiary;
-    min-width: 96px;
-    min-height: 32px;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2), 0 16px 32px rgba(0, 0, 0, 0.24);
-    padding: 2px 0;
-    border-radius: colors.$overlay-corner-radius;
-    z-index: 999;
-
-    >a {
-        background-color: transparent;
-        color: colors.$text-fill-color-primary;
-        font-size: colors.$content-control-font-size;
-        border-radius: colors.$control-corner-radius;
-        padding: 8px 11px;
-        margin: 2px 4px;
-        text-decoration: none;
-
-        &:hover {
-            background-color: colors.$solid-background-fill-color-secondary;
-        }
-
-        &:active {
-            background-color: colors.$solid-background-fill-color-tertiary;
-        }
-    }
 }
 
 .tweet-container {
@@ -242,6 +212,44 @@ onMounted(async () => {
 
         .r-o52ifk {
             display: none;
+        }
+    }
+}
+
+.context-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    background-color: colors.$solid-background-fill-color-tertiary;
+    min-width: 96px;
+    min-height: 32px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2), 0 16px 32px rgba(0, 0, 0, 0.24);
+    padding: 2px 0;
+    border-radius: colors.$overlay-corner-radius;
+    z-index: 999;
+
+    >a {
+        background-color: transparent;
+        color: colors.$text-fill-color-primary;
+        font-size: colors.$content-control-font-size;
+        border-radius: colors.$control-corner-radius;
+        padding: 8px 11px;
+        margin: 2px 4px;
+        text-decoration: none;
+
+        &:hover,
+        &:active,
+        &:focus {
+            color: colors.$text-fill-color-primary;
+            text-decoration: none;
+        }
+
+        &:hover {
+            background-color: colors.$solid-background-fill-color-secondary;
+        }
+
+        &:active {
+            background-color: colors.$solid-background-fill-color-tertiary;
         }
     }
 }
