@@ -1,17 +1,29 @@
 <template>
     <div :class="['container', container]" @contextmenu="contextmenu" ref="card">
-        <a :href="post.wayback" style="padding: 12px 16px;">
-            {{ post.original }}
-        </a>
+        <div style="padding: 12px 16px;">
+            <a :href="post.wayback" target="_blank" rel="noopener noreferrer">
+                {{ post.original }}
+            </a>
+        </div>
         <div class="context-menu" :style="style">
-            <a :href="post.wayback" target="_blank">Wayback</a>
+            <div @click="refresh" role="button">
+                <ArrowClockwise16Regular />
+                Refresh
+            </div>
+            <a :href="post.wayback" target="_blank" rel="noopener noreferrer">
+                <ArchiveArrowBack16Regular />
+                Wayback
+            </a>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+import "../types";
 import { onMounted, shallowRef, useTemplateRef, type StyleValue } from "vue";
 import { type WaybackItem } from "../helpers/wayback";
+import ArrowClockwise16Regular from "@fluentui/svg-icons/icons/arrow_clockwise_16_regular.svg?component";
+import ArchiveArrowBack16Regular from "@fluentui/svg-icons/icons/archive_arrow_back_16_regular.svg?component";
 
 const { post } = defineProps<{
     post: InstanceType<typeof WaybackItem>
@@ -46,7 +58,7 @@ function changeUrl(content: Element) {
     }
 }
 
-async function getCard({ wayback, mimetype }: { wayback: string, mimetype: string }) {
+async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: string }) {
     if (mimetype === "application/json") {
         const html = await fetch(wayback).then(res => res.text());
         const document = new DOMParser().parseFromString(html, "text/html");
@@ -55,6 +67,7 @@ async function getCard({ wayback, mimetype }: { wayback: string, mimetype: strin
             changeUrl(content);
             container.value = "tweet-container";
             card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
+            return true;
         }
     }
     else {
@@ -65,6 +78,7 @@ async function getCard({ wayback, mimetype }: { wayback: string, mimetype: strin
             changeUrl(content);
             container.value = "tweet-desktop-container";
             card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
+            return true;
         }
         else {
             const content = document.querySelector("main");
@@ -72,22 +86,25 @@ async function getCard({ wayback, mimetype }: { wayback: string, mimetype: strin
                 changeUrl(content);
                 container.value = "tweet-mobile-container";
                 card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
+                return true;
             }
         }
     }
 }
 
-onMounted(async () => {
+async function refresh() {
     if (post.groupcount > 1) {
         try {
-            const data = post.fetch();
+            const data = await post.fetch();
             if (Array.isArray(data)) {
                 const json = data.filter(x => x[1] === "application/json");
                 for (const [original, mimetype, timestamp] of json) {
                     try {
                         const wayback = `https://web.archive.org/web/${timestamp}if_/${original}`;
-                        getCard({ wayback, mimetype });
-                        return;
+                        if (await getCardAsync({ wayback, mimetype })) {
+                            post.timestamp = timestamp;
+                            return;
+                        }
                     }
                     catch { }
                 }
@@ -95,19 +112,25 @@ onMounted(async () => {
                 for (const [original, mimetype, timestamp] of html) {
                     try {
                         const wayback = `https://web.archive.org/web/${timestamp}if_/${original}`;
-                        getCard({ wayback, mimetype });
-                        return;
+                        if (await getCardAsync({ wayback, mimetype })) {
+                            post.timestamp = timestamp;
+                            return;
+                        }
                     }
                     catch { }
                 }
             }
         }
-        catch { }
+        catch {
+            getCardAsync(post);
+        }
     }
     else {
-        getCard(post);
+        getCardAsync(post);
     }
-});
+}
+
+onMounted(refresh);
 </script>
 
 <style lang="scss" scoped>
@@ -228,14 +251,19 @@ onMounted(async () => {
     border-radius: colors.$overlay-corner-radius;
     z-index: 999;
 
-    >a {
+    >a,
+    >div[role="button"] {
+        display: flex;
+        align-items: center;
         background-color: transparent;
         color: colors.$text-fill-color-primary;
+        fill: currentColor;
         font-size: colors.$content-control-font-size;
         border-radius: colors.$control-corner-radius;
         padding: 8px 11px;
         margin: 2px 4px;
         text-decoration: none;
+        cursor: pointer;
 
         &:hover,
         &:active,
@@ -250,6 +278,13 @@ onMounted(async () => {
 
         &:active {
             background-color: colors.$solid-background-fill-color-tertiary;
+        }
+
+        >svg:first-child {
+            margin-right: 12px;
+            margin-top: -1px;
+            width: 16px;
+            height: 16px;
         }
     }
 }

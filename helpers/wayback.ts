@@ -16,11 +16,11 @@ function getApi(params: Record<string, string> & Partial<{
 }
 
 export class WaybackItem {
-    id: number;
-    original: string;
-    mimetype: string;
+    readonly id: number;
+    readonly original: string;
+    readonly mimetype: string;
     timestamp: string;
-    groupcount: number;
+    readonly groupcount: number;
 
     constructor(original: string, mimetype: string, timestamp: string, groupcount: string) {
         this.id = +(popString(original.split('/')) || 0);
