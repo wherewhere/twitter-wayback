@@ -10,6 +10,11 @@
   <link rel="apple-touch-icon" type="image/png" sizes="192x192"
     href="https://abs.twimg.com/icons/apple-touch-icon-192x192.png" />
   <style>
+    body,
+    #vue-app div.cover {
+      background: #f3f3f3;
+    }
+
     #vue-app div.cover {
       position: fixed;
       top: 0;
@@ -19,7 +24,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #f3f3f3;
       z-index: 3;
     }
 
@@ -27,17 +31,17 @@
       pointer-events: none;
       -webkit-user-select: none;
       user-select: none;
+    }
 
-      .pace-progress {
-        background: #0064b2;
-        position: fixed;
-        z-index: 4;
-        bottom: 0;
-        right: 100%;
-        width: 100%;
-        height: 3px;
-        transition: all 0.2s ease-in-out;
-      }
+    .pace .pace-progress {
+      background: #0064b2;
+      position: fixed;
+      z-index: 4;
+      bottom: 0;
+      right: 100%;
+      width: 100%;
+      height: 3px;
+      transition: all 0.2s ease-in-out;
     }
 
     .pace-inactive {

@@ -91,8 +91,9 @@
 
 <script lang="ts" setup>
 import "./types";
-import { onMounted, ref, shallowRef, useTemplateRef, watchEffect } from "vue";
+import { onMounted, ref, shallowRef, useTemplateRef } from "vue";
 import { useSeoMeta } from "@unhead/vue";
+import { useAnalytics } from "./helpers/analytics";
 import { name, description, keywords } from "./package.json";
 import { getTwitterPosts, type WaybackItem } from "./helpers/wayback";
 import { popString } from "./helpers/utils";
@@ -137,6 +138,7 @@ const meta = useSeoMeta({
     articleAuthor: [author],
     articleTag: keywords
 });
+useAnalytics();
 
 function getDateString(date?: string) {
     if (!date) { return; }
@@ -256,6 +258,11 @@ onMounted(() => {
 <style lang="scss">
 @use "./styles/colors";
 @use "./styles/controls";
+
+:root {
+    accent-color: colors.$accent-fill-color-default;
+    color-scheme: light;
+}
 
 body {
     background: colors.$solid-background-fill-color-base;
