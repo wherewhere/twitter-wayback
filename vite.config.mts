@@ -37,7 +37,6 @@ export default defineConfig({
     build: {
         outDir: "dist",
         sourcemap: true,
-        minify: "terser",
         rolldownOptions: {
             checks: {
                 pluginTimings: false,
