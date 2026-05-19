@@ -67,6 +67,22 @@
                     </template>
                     <input name="toDate" type="date" v-model="toDate" />
                 </SettingsCard>
+                <SettingsCard>
+                    <template #icon>
+                        <GroupList20Regular />
+                    </template>
+                    <template #header>
+                        <h3 id="settings-tab" class="unset">Tab</h3>
+                    </template>
+                    <template #description>
+                        Choose the tab to display posts.
+                    </template>
+                    <select name="tab" v-model="tab">
+                        <option value="all">All</option>
+                        <option value="replies">Replies</option>
+                        <option value="media">Media</option>
+                    </select>
+                </SettingsCard>
             </div>
         </ContentDialog>
         <div v-if="isLoading">
@@ -76,7 +92,7 @@
         </div>
         <div v-else-if="posts.length" class="masonry">
             <div v-for="value in posts">
-                <Post :post="value" />
+                <Post :post="value" :tab="tab" />
             </div>
         </div>
         <div v-else-if="error">
@@ -106,6 +122,7 @@ import Person20Regular from "@fluentui/svg-icons/icons/person_20_regular.svg?com
 import ArrowSort20Regular from "@fluentui/svg-icons/icons/arrow_sort_20_regular.svg?component";
 import CalendarLtr20Regular from "@fluentui/svg-icons/icons/calendar_ltr_20_regular.svg?component";
 import CalendarRtl20Regular from "@fluentui/svg-icons/icons/calendar_rtl_20_regular.svg?component";
+import GroupList20Regular from "@fluentui/svg-icons/icons/group_list_20_regular.svg?component";
 
 const settingsFlyout = useTemplateRef("settings");
 async function openSettingsFlyout() {
@@ -149,6 +166,7 @@ const username = shallowRef('');
 const sortOrder = shallowRef<"oldest" | "newest">("oldest");
 const fromDate = shallowRef<string>();
 const toDate = shallowRef<string>();
+const tab = shallowRef<"all" | "replies" | "media">("all");
 
 let hashChanged = false;
 function getSettings() {
@@ -171,6 +189,9 @@ function getSettings() {
         if (params.has("to")) {
             toDate.value = params.get("to")!;
         }
+        if (params.has("tab")) {
+            tab.value = params.get("tab") as "all" | "replies" | "media";
+        }
     }
 }
 
@@ -182,7 +203,7 @@ function setSettings() {
         }
         settings.user = username.value;
     }
-    if (sortOrder.value === "newest") {
+    if (sortOrder.value !== "oldest") {
         settings.sort = sortOrder.value;
     }
     if (fromDate.value) {
@@ -190,6 +211,9 @@ function setSettings() {
     }
     if (toDate.value) {
         settings.to = toDate.value;
+    }
+    if (tab.value !== "all") {
+        settings.tab = tab.value;
     }
     window.location.hash = new URLSearchParams(settings).toString();
     meta.patch({

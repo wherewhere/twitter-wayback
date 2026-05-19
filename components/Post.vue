@@ -1,5 +1,5 @@
 <template>
-    <div :class="['container', container]" @contextmenu="contextmenu" ref="card">
+    <div :class="['container', container]" @contextmenu="contextmenu" v-show="isShow" ref="card">
         <div style="padding: 12px 16px;">
             <a :href="post.wayback" target="_blank" rel="noopener noreferrer">
                 {{ post.original }}
@@ -14,19 +14,25 @@
                 <ArchiveArrowBack16Regular />
                 Wayback
             </a>
+            <div @click="copy" role="button">
+                <Copy16Regular />
+                Copy URL
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import "../types";
-import { onMounted, shallowRef, useTemplateRef, type StyleValue } from "vue";
+import { computed, onMounted, shallowRef, useTemplateRef, type StyleValue } from "vue";
 import { type WaybackItem } from "../helpers/wayback";
 import ArrowClockwise16Regular from "@fluentui/svg-icons/icons/arrow_clockwise_16_regular.svg?component";
 import ArchiveArrowBack16Regular from "@fluentui/svg-icons/icons/archive_arrow_back_16_regular.svg?component";
+import Copy16Regular from "@fluentui/svg-icons/icons/copy_16_regular.svg?component";
 
-const { post } = defineProps<{
-    post: InstanceType<typeof WaybackItem>
+const { post, tab } = defineProps<{
+    post: InstanceType<typeof WaybackItem>,
+    tab: "all" | "replies" | "media"
 }>();
 
 const style = shallowRef<StyleValue>({});
@@ -43,9 +49,7 @@ function contextmenu(event: PointerEvent) {
 }
 
 document.addEventListener("click", () => style.value = {});
-
 const card = useTemplateRef("card");
-
 const container = shallowRef<string>();
 
 function changeUrl(content: Element) {
@@ -58,6 +62,8 @@ function changeUrl(content: Element) {
     }
 }
 
+const hasMedia = shallowRef(false);
+const isReply = shallowRef(false);
 async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: string }) {
     if (mimetype === "application/json") {
         const html = await fetch(wayback).then(res => res.text());
@@ -66,6 +72,37 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
         if (content) {
             changeUrl(content);
             container.value = "tweet-container";
+            const json = document.querySelector("#jsonview pre")?.textContent;
+            if (json) {
+                try {
+                    const post = JSON.parse(json);
+                    const includes = post.includes;
+                    if (includes) {
+                        hasMedia.value = !!includes.media?.length;
+                        isReply.value = !!includes.tweets?.length;
+                    }
+                    const dateString = post.data?.created_at;
+                    if (typeof dateString === "string") {
+                        const date = new Date(dateString);
+                        const parentDate = content.querySelector<HTMLAnchorElement>("#parentdate");
+                        if (parentDate) {
+                            parentDate.innerText = date.toString();
+                            parentDate.href = wayback;
+                        }
+                    }
+                    const scripts = content.querySelectorAll<HTMLScriptElement>(".embedded-tweet-container script");
+                    if (scripts) {
+                        for (const script of scripts) {
+                            const code = script.textContent;
+                            if (code) {
+                                const func = new Function("document", code);
+                                func(document);
+                            }
+                        }
+                    }
+                }
+                catch { }
+            }
             card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
             return true;
         }
@@ -90,6 +127,21 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
             }
         }
     }
+}
+
+const isShow = computed(() => {
+    switch (tab) {
+        case "all":
+            return true;
+        case "replies":
+            return isReply.value;
+        case "media":
+            return hasMedia.value;
+    }
+});
+
+function copy() {
+    return navigator.clipboard.writeText(post.original);
 }
 
 async function refresh() {
