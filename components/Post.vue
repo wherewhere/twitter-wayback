@@ -10,14 +10,14 @@
                 <ArrowClockwise16Regular />
                 Refresh
             </div>
-            <a :href="post.wayback" target="_blank" rel="noopener noreferrer">
-                <ArchiveArrowBack16Regular />
-                Wayback
-            </a>
             <div @click="copy" role="button">
                 <Copy16Regular />
                 Copy URL
             </div>
+            <a :href="post.wayback" target="_blank" rel="noopener noreferrer">
+                <ArchiveArrowBack16Regular />
+                Wayback
+            </a>
         </div>
     </div>
 </template>
@@ -315,6 +315,7 @@ onMounted(refresh);
         padding: 8px 11px;
         margin: 2px 4px;
         text-decoration: none;
+        white-space: nowrap;
         cursor: pointer;
 
         &:hover,
