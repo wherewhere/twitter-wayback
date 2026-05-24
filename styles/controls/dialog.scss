@@ -34,6 +34,9 @@ dialog {
     background: $content-dialog-background;
     border: $content-dialog-border-width solid $content-dialog-border;
     border-radius: $overlay-corner-radius;
+    font-family: $content-control-theme-font-family;
+    font-size: $content-control-font-size;
+    line-height: $content-control-line-height;
     padding: 0;
     transition: scale 0.083s cubic-bezier(0, 0, 0, 1), opacity 0.083s linear, display 0.083s allow-discrete, overlay 0.083s allow-discrete;
 

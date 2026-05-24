@@ -41,6 +41,9 @@ details {
     min-width: $flyout-theme-min-width;
     min-height: $expander-min-height;
     border-radius: $control-corner-radius;
+    font-family: $content-control-theme-font-family;
+    font-size: $content-control-font-size;
+    line-height: $content-control-line-height;
 
     summary {
         display: flex;

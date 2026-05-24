@@ -1,16 +1,18 @@
 <template>
     <div class="stack-vertical" style="row-gap: 8px; align-items: stretch;">
-        <div class="stack-horizontal" style="column-gap: 8px; justify-content: space-between;">
-            <input id="username" name="username" v-model="username" type="text" placeholder="wherewhere7"
-                @keyup.enter="() => getPosts(username)" style="flex: 1;" />
-            <button class="icon-button" title="Fetch" @click="() => getPosts(username)"
-                :disabled="!username || isLoading">
-                <ArrowRight16Regular />
-            </button>
-            <button class="icon-button" title="Settings" @click="openSettingsFlyout">
-                <Settings16Regular />
-            </button>
-        </div>
+        <header class="header">
+            <div class="stack-horizontal" style="column-gap: 8px; justify-content: space-between;">
+                <input id="username" name="username" v-model="username" type="text" placeholder="wherewhere7"
+                    @keyup.enter="() => getPosts(username)" style="flex: 1;" />
+                <button class="icon-button" title="Fetch" @click="() => getPosts(username)"
+                    :disabled="!username || isLoading">
+                    <ArrowRight16Regular />
+                </button>
+                <button class="icon-button" title="Settings" @click="openSettingsFlyout">
+                    <Settings16Regular />
+                </button>
+            </div>
+        </header>
         <ContentDialog ref="settings" PrimaryButtonText="Save" CloseButtonText="Close" DefaultButton="Primary">
             <template #title>
                 <h2 id="settings" class="unset">Settings</h2>
@@ -38,10 +40,10 @@
                     <template #description>
                         Choose the order in which posts are displayed.
                     </template>
-                    <select name="sortOrder" v-model="sortOrder">
+                    <ComboBox name="sortOrder" v-model="sortOrder">
                         <option value="oldest">Oldest to Newest</option>
                         <option value="newest">Newest to Oldest</option>
-                    </select>
+                    </ComboBox>
                 </SettingsCard>
                 <SettingsExpander>
                     <template #icon>
@@ -92,11 +94,24 @@
                         <template #description>
                             Filter by reply status.
                         </template>
-                        <select name="replies" v-model="replies">
+                        <ComboBox name="replies" v-model="type.replies">
                             <option :value="undefined">Default</option>
                             <option :value="true">Include</option>
                             <option :value="false">Exclude</option>
-                        </select>
+                        </ComboBox>
+                    </SettingsCard>
+                    <SettingsCard class="default-setting-expander-item">
+                        <template #header>
+                            <h4 id="settings-type-retweets" class="unset">Retweets</h4>
+                        </template>
+                        <template #description>
+                            Filter by retweet status.
+                        </template>
+                        <ComboBox name="retweets" v-model="type.retweets">
+                            <option :value="undefined">Default</option>
+                            <option :value="true">Include</option>
+                            <option :value="false">Exclude</option>
+                        </ComboBox>
                     </SettingsCard>
                     <SettingsCard class="default-setting-expander-item">
                         <template #header>
@@ -105,32 +120,35 @@
                         <template #description>
                             Filter by media status.
                         </template>
-                        <select name="media" v-model="media">
+                        <ComboBox name="media" v-model="type.media">
                             <option :value="undefined">Default</option>
                             <option :value="true">Include</option>
                             <option :value="false">Exclude</option>
-                        </select>
+                        </ComboBox>
                     </SettingsCard>
                 </SettingsExpander>
             </div>
         </ContentDialog>
-        <div v-if="isLoading">
-            <svg class="refresh-ring" width="16" height="16" viewBox="0 0 16 16">
-                <circle class="indeterminate-indicator" cx="8px" cy="8px" r="7px"></circle>
-            </svg>
-        </div>
-        <div v-else-if="posts.length" class="masonry">
-            <div v-for="value in posts">
-                <Post :post="value" :type="{ replies, media }" />
+        <main>
+            <div v-if="isLoading">
+                <svg class="refresh-ring" width="16" height="16" viewBox="0 0 16 16">
+                    <circle class="indeterminate-indicator" cx="8px" cy="8px" r="7px"></circle>
+                </svg>
             </div>
-        </div>
-        <div v-else-if="error">
-            Error fetching posts:<br />
-            {{ error }}
-        </div>
-        <label v-else for="username">
-            Enter a Twitter username and click "Fetch" to load archived posts.
-        </label>
+            <div v-else-if="posts.length" class="masonry">
+                <div v-for="value in posts">
+                    <Post :post="value" :type="type" />
+                </div>
+            </div>
+            <output v-else-if="error">
+                Error fetching posts:<br />
+                {{ error }}
+            </output>
+            <label v-else for="username">
+                Enter a Twitter username and click "Fetch" to load archived posts.
+            </label>
+        </main>
+        <BackToTop />
     </div>
 </template>
 
@@ -142,10 +160,13 @@ import { useAnalytics } from "./helpers/analytics";
 import { name, description, keywords } from "./package.json";
 import { getTwitterPosts, type WaybackItem } from "./helpers/wayback";
 import { popString } from "./helpers/utils";
+import type { PostType } from "./components/Post.vue";
 import ContentDialog from "./components/ContentDialog.vue";
 import SettingsCard from "./components/SettingsCard.vue";
 import SettingsExpander from "./components/SettingsExpander.vue";
+import ComboBox from "./components/ComboBox.vue";
 import Post from "./components/Post.vue";
+import BackToTop from "./components/BackToTop.vue";
 import ArrowRight16Regular from "@fluentui/svg-icons/icons/arrow_right_16_regular.svg?component";
 import Settings16Regular from "@fluentui/svg-icons/icons/settings_16_regular.svg?component";
 import Person20Regular from "@fluentui/svg-icons/icons/person_20_regular.svg?component";
@@ -196,8 +217,11 @@ const sortOrder = shallowRef<"oldest" | "newest">("oldest");
 const fromDate = shallowRef<string>();
 const toDate = shallowRef<string>();
 
-const replies = shallowRef<boolean | undefined>();
-const media = shallowRef<boolean | undefined>();
+const type = ref<PostType>({
+    replies: undefined,
+    media: undefined,
+    retweets: undefined
+});
 
 let hashChanged = false;
 function getSettings() {
@@ -222,13 +246,27 @@ function getSettings() {
         }
         if (params.has("includes")) {
             const includes = params.get("includes")!.split(',');
-            replies.value = includes.includes("replies") ? true : replies.value;
-            media.value = includes.includes("media") ? true : media.value;
+            if (includes.includes("replies")) {
+                type.value.replies = true;
+            }
+            if (includes.includes("retweets")) {
+                type.value.retweets = true;
+            }
+            if (includes.includes("media")) {
+                type.value.media = true;
+            }
         }
         if (params.has("excludes")) {
             const excludes = params.get("excludes")!.split(',');
-            replies.value = excludes.includes("replies") ? false : replies.value;
-            media.value = excludes.includes("media") ? false : media.value;
+            if (excludes.includes("replies")) {
+                type.value.replies = false;
+            }
+            if (excludes.includes("retweets")) {
+                type.value.retweets = false;
+            }
+            if (excludes.includes("media")) {
+                type.value.media = false;
+            }
         }
     }
 }
@@ -251,16 +289,22 @@ function setSettings() {
         settings.to = toDate.value;
     }
     const includes = [], excludes = [];
-    if (replies.value === true) {
+    if (type.value.replies === true) {
         includes.push("replies");
     }
-    else if (replies.value === false) {
+    else if (type.value.replies === false) {
         excludes.push("replies");
     }
-    if (media.value === true) {
+    if (type.value.retweets === true) {
+        includes.push("retweets");
+    }
+    else if (type.value.retweets === false) {
+        excludes.push("retweets");
+    }
+    if (type.value.media === true) {
         includes.push("media");
     }
-    else if (media.value === false) {
+    else if (type.value.media === false) {
         excludes.push("media");
     }
     if (includes.length) {
@@ -343,9 +387,10 @@ onMounted(() => {
 
 body {
     background: colors.$solid-background-fill-color-base;
-    font-size: colors.$content-control-font-size;
     color: colors.$text-fill-color-primary;
-    font-family: colors.$body-font;
+    font-family: colors.$content-control-theme-font-family;
+    font-size: colors.$content-control-font-size;
+    line-height: colors.$content-control-line-height;
 }
 
 h6.unset,
@@ -381,6 +426,16 @@ section {
 .stack-horizontal {
     display: flex;
     flex-direction: row;
+}
+
+.header {
+    height: 32px;
+
+    >div {
+        position: fixed;
+        left: 8px;
+        right: 8px;
+    }
 }
 
 .masonry {

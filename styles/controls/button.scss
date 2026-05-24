@@ -39,6 +39,9 @@ select {
     border-top: $button-border-theme-thickness solid $control-stroke-color-default;
     border-right: $button-border-theme-thickness solid $control-stroke-color-default;
     border-bottom: $button-border-theme-thickness solid $control-stroke-color-secondary;
+    font-family: $content-control-theme-font-family;
+    font-size: $content-control-font-size;
+    line-height: $content-control-line-height;
 
     &:not(:disabled):hover {
         color: $button-foreground-pointer-over;

@@ -25,14 +25,20 @@
 <script lang="ts" setup>
 import "../types";
 import { computed, onMounted, shallowRef, useTemplateRef, type StyleValue } from "vue";
-import { type WaybackItem } from "../helpers/wayback";
+import type { WaybackItem } from "../helpers/wayback";
 import ArrowClockwise16Regular from "@fluentui/svg-icons/icons/arrow_clockwise_16_regular.svg?component";
 import ArchiveArrowBack16Regular from "@fluentui/svg-icons/icons/archive_arrow_back_16_regular.svg?component";
 import Copy16Regular from "@fluentui/svg-icons/icons/copy_16_regular.svg?component";
 
+export type PostType = {
+    replies: boolean | undefined,
+    media: boolean | undefined,
+    retweets: boolean | undefined
+};
+
 const { post, type } = defineProps<{
     post: InstanceType<typeof WaybackItem>,
-    type: { replies: boolean | undefined, media: boolean | undefined }
+    type: PostType
 }>();
 
 const style = shallowRef<StyleValue>({});
@@ -64,6 +70,7 @@ function changeUrl(content: Element) {
 
 const hasMedia = shallowRef(false);
 const isReply = shallowRef(false);
+const isRetweet = shallowRef(false);
 async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: string }) {
     if (mimetype === "application/json") {
         const html = await fetch(wayback).then(res => res.text());
@@ -76,18 +83,19 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
             if (json) {
                 try {
                     const post = JSON.parse(json);
-                    const includes = post.includes;
-                    if (includes) {
-                        hasMedia.value = !!includes.media?.length;
-                        isReply.value = !!includes.tweets?.length;
-                    }
-                    const dateString = post.data?.created_at;
-                    if (typeof dateString === "string") {
-                        const date = new Date(dateString);
-                        const parentDate = content.querySelector<HTMLAnchorElement>("#parentdate");
-                        if (parentDate) {
-                            parentDate.innerText = date.toString();
-                            parentDate.href = wayback;
+                    hasMedia.value = !!post.includes?.media?.length;
+                    const data = post.data;
+                    if (data) {
+                        isReply.value = !!data.referenced_tweets?.some((tweet: any) => tweet.type === "replied_to");
+                        isRetweet.value = !!data.referenced_tweets?.some((tweet: any) => tweet.type === "retweeted");
+                        const dateString = data.created_at;
+                        if (typeof dateString === "string") {
+                            const date = new Date(dateString);
+                            const parentDate = content.querySelector<HTMLAnchorElement>("#parentdate");
+                            if (parentDate) {
+                                parentDate.innerText = date.toString();
+                                parentDate.href = wayback;
+                            }
                         }
                     }
                     const scripts = content.querySelectorAll<HTMLScriptElement>(".embedded-tweet-container script");
@@ -133,9 +141,7 @@ const isShow = computed(() => {
     function matches(expected: boolean | undefined, actual: boolean) {
         return expected === undefined || expected === actual;
     }
-    const a = matches(type.replies, isReply.value) && matches(type.media, hasMedia.value);
-    console.log(a, isReply.value, hasMedia.value);
-    return a;
+    return matches(type.replies, isReply.value) && matches(type.retweets, isRetweet.value) && matches(type.media, hasMedia.value);
 });
 
 function copy() {
