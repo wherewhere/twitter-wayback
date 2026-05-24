@@ -24,9 +24,9 @@ dialog {
     display: none;
     flex-direction: column;
     min-width: $content-dialog-min-width;
-    max-width: min(100vw, $content-dialog-max-width);
+    max-width: min(100%, $content-dialog-max-width);
     min-height: $content-dialog-min-height;
-    max-height: min(100vh, $content-dialog-max-height);
+    max-height: min(100%, $content-dialog-max-height);
     box-sizing: border-box;
     overflow: auto;
     color: $content-dialog-foreground;

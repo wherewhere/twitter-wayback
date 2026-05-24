@@ -1,0 +1,151 @@
+@use "../colors" as *;
+@use "../converter" as converter;
+
+$expander-header-background: $card-background-fill-color-default;
+$expander-header-foreground: $text-fill-color-primary;
+$expander-header-foreground-pointer-over: $text-fill-color-primary;
+$expander-header-foreground-pressed: $text-fill-color-primary;
+$expander-header-border: $card-stroke-color-default;
+$expander-header-border-pointer-over: $card-stroke-color-default;
+$expander-header-border-pressed: $card-stroke-color-default;
+$expander-header-foreground-disabled: $text-fill-color-disabled;
+$expander-header-border-disabled: $card-stroke-color-default;
+$expander-header-border-thickness: 1px;
+
+$expander-chevron-background: $subtle-fill-color-transparent;
+$expander-chevron-background-pointer-over: $subtle-fill-color-secondary;
+$expander-chevron-background-pressed: $subtle-fill-color-tertiary;
+$expander-chevron-foreground: $text-fill-color-primary;
+$expander-chevron-foreground-pointer-over: $text-fill-color-primary;
+$expander-chevron-foreground-pressed: $text-fill-color-primary;
+$expander-chevron-border: $subtle-fill-color-transparent;
+$expander-chevron-border-pointer-over: $subtle-fill-color-transparent;
+$expander-chevron-border-pressed: $subtle-fill-color-transparent;
+$expander-chevron-border-thickness: 0;
+
+$expander-content-background: $card-background-fill-color-secondary;
+$expander-content-border: $card-stroke-color-default;
+
+$flyout-theme-min-width: 96px;
+$expander-min-height: 48px;
+
+$expander-header-padding: 0 0 0 16px;
+$expander-chevron-margin: 0 8px 0 20px;
+$expander-chevron-button-size: 32px;
+$expander-chevron-glyph-size: 12px;
+
+$expander-content-padding: 16px;
+$expander-content-border-thickness: 0 1px 1px 1px;
+
+details {
+    min-width: $flyout-theme-min-width;
+    min-height: $expander-min-height;
+    border-radius: $control-corner-radius;
+
+    summary {
+        display: flex;
+        list-style: none;
+        align-items: center;
+        justify-content: space-between;
+        background: $expander-header-background;
+        border: $expander-header-border-thickness solid $expander-header-border;
+        min-height: $expander-min-height;
+        border-radius: $control-corner-radius;
+        padding: $expander-header-padding;
+        color: $expander-header-foreground;
+
+        .expand-collapse-chevron-border {
+            display: flex;
+            width: $expander-chevron-button-size;
+            height: $expander-chevron-button-size;
+            margin: $expander-chevron-margin;
+            border-radius: $control-corner-radius;
+            border: $expander-chevron-border-thickness solid $expander-chevron-border;
+            background: $expander-chevron-background;
+            align-items: center;
+            justify-content: center;
+
+            .expand-collapse-chevron-down,
+            .expand-collapse-chevron-up {
+                width: $expander-chevron-glyph-size;
+                height: $expander-chevron-glyph-size;
+                fill: $expander-chevron-foreground;
+            }
+
+            .expand-collapse-chevron-up {
+                display: none;
+            }
+        }
+
+        &:not(:disabled):hover {
+            color: $expander-header-foreground-pointer-over;
+            border-color: $expander-header-border-pointer-over;
+
+            .expand-collapse-chevron-border {
+                background: $expander-chevron-background-pointer-over;
+                border-color: $expander-chevron-border-pointer-over;
+
+                .expand-collapse-chevron-down,
+                .expand-collapse-chevron-up {
+                    fill: $expander-chevron-foreground-pointer-over;
+                }
+            }
+        }
+
+        &:not(:disabled):active {
+            color: $expander-header-foreground-pressed;
+            border-color: $expander-header-border-pressed;
+
+            .expand-collapse-chevron-border {
+                background: $expander-chevron-background-pressed;
+                border-color: $expander-chevron-border-pressed;
+
+                .expand-collapse-chevron-down,
+                .expand-collapse-chevron-up {
+                    fill: $expander-chevron-foreground-pressed;
+                }
+            }
+        }
+
+        &:disabled {
+            color: $expander-header-foreground-disabled;
+            border-color: $expander-header-border-disabled;
+
+            .expand-collapse-chevron-border {
+                background: $expander-chevron-background;
+                border-color: $expander-chevron-border;
+
+                .expand-collapse-chevron-down,
+                .expand-collapse-chevron-up {
+                    fill: $expander-chevron-foreground;
+                }
+            }
+        }
+    }
+
+    &[open] {
+        summary {
+            border-radius: converter.top-corner-radius-filter-converter($control-corner-radius);
+
+            .expand-collapse-chevron-border {
+                .expand-collapse-chevron-down {
+                    display: none;
+                }
+
+                .expand-collapse-chevron-up {
+                    display: inline;
+                }
+            }
+        }
+    }
+
+    .expander-content {
+        background: $expander-content-background;
+        border-radius: converter.bottom-corner-radius-filter-converter($control-corner-radius);
+        border-width: $expander-content-border-thickness;
+        border-style: solid;
+        border-color: $expander-content-border;
+        min-height: $expander-min-height;
+        padding: $expander-content-padding;
+    }
+}

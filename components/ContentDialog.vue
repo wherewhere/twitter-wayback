@@ -81,7 +81,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 @use "../styles/colors" as *;
-@use "../styles/controls/dialog" as dialog;
+@use "../styles/controls/dialog";
 
 .dialog-space {
     flex: 1;

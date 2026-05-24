@@ -19,6 +19,9 @@ $text-control-placeholder-foreground-disabled: $text-fill-color-disabled;
 $text-control-border-theme-thickness: 1px;
 $text-control-border-theme-thickness-focused: 2px;
 
+$text-control-theme-padding: 6px 11px;
+$text-control-theme-padding-focused: 6px 11px 5px 11px;
+
 input,
 input[type="datetime"],
 input[type="email"],
@@ -29,7 +32,7 @@ input[type="tel"],
 input[type="text"],
 input[type="url"],
 textarea {
-    padding: 6px;
+    padding: $text-control-theme-padding;
     color: $text-control-foreground;
     fill: currentColor;
     background: $text-control-background;
@@ -47,7 +50,7 @@ textarea {
     &:not(:disabled):active,
     &:not(:disabled):focus:not(:active) {
         outline: none;
-        padding: 6px 6px 5px 6px;
+        padding: $text-control-theme-padding-focused;
         color: $text-control-foreground-focused;
         background: $text-control-background-focused;
         border-bottom: $text-control-border-theme-thickness-focused solid $system-accent-color-dark1;

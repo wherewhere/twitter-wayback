@@ -1,0 +1,69 @@
+@use "sass:list";
+
+@function _top-left-radius($corner-radius) {
+    @return list.nth($corner-radius, 1);
+}
+
+@function _top-right-radius($corner-radius) {
+    $count: list.length($corner-radius);
+
+    @if $count == 1 {
+        @return list.nth($corner-radius, 1);
+    }
+
+    @if $count == 2 {
+        @return list.nth($corner-radius, 2);
+    }
+
+    @return list.nth($corner-radius, 2);
+}
+
+@function top-corner-radius-filter-converter($corner-radius) {
+    $top-left: _top-left-radius($corner-radius);
+    $top-right: _top-right-radius($corner-radius);
+
+    @return $top-left $top-right 0 0;
+}
+
+@function _bottom-right-radius($corner-radius) {
+    $count: list.length($corner-radius);
+
+    @if $count == 1 {
+        @return list.nth($corner-radius, 1);
+    }
+
+    @if $count == 2 {
+        @return list.nth($corner-radius, 1);
+    }
+
+    @if $count == 3 {
+        @return list.nth($corner-radius, 3);
+    }
+
+    @return list.nth($corner-radius, 3);
+}
+
+@function _bottom-left-radius($corner-radius) {
+    $count: list.length($corner-radius);
+
+    @if $count == 1 {
+        @return list.nth($corner-radius, 1);
+    }
+
+    @if $count == 2 {
+        @return list.nth($corner-radius, 2);
+    }
+
+    @if $count == 3 {
+        @return list.nth($corner-radius, 2);
+    }
+
+    @return list.nth($corner-radius, 4);
+}
+
+@function bottom-corner-radius-filter-converter($corner-radius) {
+    $bottom-right: _bottom-right-radius($corner-radius);
+    $bottom-left: _bottom-left-radius($corner-radius);
+
+    @return 0 0 $bottom-right $bottom-left;
+}

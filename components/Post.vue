@@ -30,9 +30,9 @@ import ArrowClockwise16Regular from "@fluentui/svg-icons/icons/arrow_clockwise_1
 import ArchiveArrowBack16Regular from "@fluentui/svg-icons/icons/archive_arrow_back_16_regular.svg?component";
 import Copy16Regular from "@fluentui/svg-icons/icons/copy_16_regular.svg?component";
 
-const { post, tab } = defineProps<{
+const { post, type } = defineProps<{
     post: InstanceType<typeof WaybackItem>,
-    tab: "all" | "replies" | "media"
+    type: { replies: boolean | undefined, media: boolean | undefined }
 }>();
 
 const style = shallowRef<StyleValue>({});
@@ -130,14 +130,12 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
 }
 
 const isShow = computed(() => {
-    switch (tab) {
-        case "all":
-            return true;
-        case "replies":
-            return isReply.value;
-        case "media":
-            return hasMedia.value;
+    function matches(expected: boolean | undefined, actual: boolean) {
+        return expected === undefined || expected === actual;
     }
+    const a = matches(type.replies, isReply.value) && matches(type.media, hasMedia.value);
+    console.log(a, isReply.value, hasMedia.value);
+    return a;
 });
 
 function copy() {

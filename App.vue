@@ -43,46 +43,75 @@
                         <option value="newest">Newest to Oldest</option>
                     </select>
                 </SettingsCard>
-                <SettingsCard>
+                <SettingsExpander>
                     <template #icon>
-                        <CalendarLtr20Regular />
+                        <Calendar20Regular />
                     </template>
                     <template #header>
-                        <h3 id="settings-username" class="unset">From</h3>
+                        <h3 id="settings-date" class="unset">Date</h3>
                     </template>
                     <template #description>
-                        Filter posts starting from a specific date.
+                        Filter posts by date range.
                     </template>
-                    <input name="fromDate" type="date" v-model="fromDate" />
-                </SettingsCard>
-                <SettingsCard>
-                    <template #icon>
-                        <CalendarRtl20Regular />
-                    </template>
-                    <template #header>
-                        <h3 id="settings-username" class="unset">To</h3>
-                    </template>
-                    <template #description>
-                        Filter posts up to a specific date.
-                    </template>
-                    <input name="toDate" type="date" v-model="toDate" />
-                </SettingsCard>
-                <SettingsCard>
+                    <SettingsCard class="default-setting-expander-item">
+                        <template #header>
+                            <h4 id="settings-date-from" class="unset">From</h4>
+                        </template>
+                        <template #description>
+                            Filter posts starting from a specific date.
+                        </template>
+                        <input name="fromDate" type="date" v-model="fromDate" />
+                    </SettingsCard>
+                    <SettingsCard class="default-setting-expander-item">
+                        <template #header>
+                            <h4 id="settings-date-to" class="unset">To</h4>
+                        </template>
+                        <template #description>
+                            Filter posts up to a specific date.
+                        </template>
+                        <input name="toDate" type="date" v-model="toDate" />
+                    </SettingsCard>
+                </SettingsExpander>
+                <SettingsExpander>
                     <template #icon>
                         <GroupList20Regular />
                     </template>
                     <template #header>
-                        <h3 id="settings-tab" class="unset">Tab</h3>
+                        <h3 id="settings-type" class="unset">Type</h3>
                     </template>
                     <template #description>
-                        Choose the tab to display posts.
+                        <span
+                            title="Include means only show posts of that type, Exclude means show all posts except those of that type, and Default means no filtering based on that type.">
+                            Choose the type to display posts.
+                        </span>
                     </template>
-                    <select name="tab" v-model="tab">
-                        <option value="all">All</option>
-                        <option value="replies">Replies</option>
-                        <option value="media">Media</option>
-                    </select>
-                </SettingsCard>
+                    <SettingsCard class="default-setting-expander-item">
+                        <template #header>
+                            <h4 id="settings-type-replies" class="unset">Replies</h4>
+                        </template>
+                        <template #description>
+                            Filter by reply status.
+                        </template>
+                        <select name="replies" v-model="replies">
+                            <option :value="undefined">Default</option>
+                            <option :value="true">Include</option>
+                            <option :value="false">Exclude</option>
+                        </select>
+                    </SettingsCard>
+                    <SettingsCard class="default-setting-expander-item">
+                        <template #header>
+                            <h4 id="settings-type-media" class="unset">Media</h4>
+                        </template>
+                        <template #description>
+                            Filter by media status.
+                        </template>
+                        <select name="media" v-model="media">
+                            <option :value="undefined">Default</option>
+                            <option :value="true">Include</option>
+                            <option :value="false">Exclude</option>
+                        </select>
+                    </SettingsCard>
+                </SettingsExpander>
             </div>
         </ContentDialog>
         <div v-if="isLoading">
@@ -92,7 +121,7 @@
         </div>
         <div v-else-if="posts.length" class="masonry">
             <div v-for="value in posts">
-                <Post :post="value" :tab="tab" />
+                <Post :post="value" :type="{ replies, media }" />
             </div>
         </div>
         <div v-else-if="error">
@@ -115,13 +144,13 @@ import { getTwitterPosts, type WaybackItem } from "./helpers/wayback";
 import { popString } from "./helpers/utils";
 import ContentDialog from "./components/ContentDialog.vue";
 import SettingsCard from "./components/SettingsCard.vue";
+import SettingsExpander from "./components/SettingsExpander.vue";
 import Post from "./components/Post.vue";
 import ArrowRight16Regular from "@fluentui/svg-icons/icons/arrow_right_16_regular.svg?component";
 import Settings16Regular from "@fluentui/svg-icons/icons/settings_16_regular.svg?component";
 import Person20Regular from "@fluentui/svg-icons/icons/person_20_regular.svg?component";
 import ArrowSort20Regular from "@fluentui/svg-icons/icons/arrow_sort_20_regular.svg?component";
-import CalendarLtr20Regular from "@fluentui/svg-icons/icons/calendar_ltr_20_regular.svg?component";
-import CalendarRtl20Regular from "@fluentui/svg-icons/icons/calendar_rtl_20_regular.svg?component";
+import Calendar20Regular from "@fluentui/svg-icons/icons/calendar_ltr_20_regular.svg?component";
 import GroupList20Regular from "@fluentui/svg-icons/icons/group_list_20_regular.svg?component";
 
 const settingsFlyout = useTemplateRef("settings");
@@ -166,7 +195,9 @@ const username = shallowRef('');
 const sortOrder = shallowRef<"oldest" | "newest">("oldest");
 const fromDate = shallowRef<string>();
 const toDate = shallowRef<string>();
-const tab = shallowRef<"all" | "replies" | "media">("all");
+
+const replies = shallowRef<boolean | undefined>();
+const media = shallowRef<boolean | undefined>();
 
 let hashChanged = false;
 function getSettings() {
@@ -189,8 +220,15 @@ function getSettings() {
         if (params.has("to")) {
             toDate.value = params.get("to")!;
         }
-        if (params.has("tab")) {
-            tab.value = params.get("tab") as "all" | "replies" | "media";
+        if (params.has("includes")) {
+            const includes = params.get("includes")!.split(',');
+            replies.value = includes.includes("replies") ? true : replies.value;
+            media.value = includes.includes("media") ? true : media.value;
+        }
+        if (params.has("excludes")) {
+            const excludes = params.get("excludes")!.split(',');
+            replies.value = excludes.includes("replies") ? false : replies.value;
+            media.value = excludes.includes("media") ? false : media.value;
         }
     }
 }
@@ -212,8 +250,24 @@ function setSettings() {
     if (toDate.value) {
         settings.to = toDate.value;
     }
-    if (tab.value !== "all") {
-        settings.tab = tab.value;
+    const includes = [], excludes = [];
+    if (replies.value === true) {
+        includes.push("replies");
+    }
+    else if (replies.value === false) {
+        excludes.push("replies");
+    }
+    if (media.value === true) {
+        includes.push("media");
+    }
+    else if (media.value === false) {
+        excludes.push("media");
+    }
+    if (includes.length) {
+        settings.includes = includes.join(',');
+    }
+    if (excludes.length) {
+        settings.excludes = excludes.join(',');
     }
     window.location.hash = new URLSearchParams(settings).toString();
     meta.patch({
