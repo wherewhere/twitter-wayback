@@ -1,5 +1,5 @@
 <template>
-    <div class="combobox" :class="className" :style="style">
+    <div class="combobox" :class="className" :style="style" :width="width" :height="height">
         <select v-bind="$attrs" v-model="model">
             <slot></slot>
         </select>
@@ -11,7 +11,17 @@
 import { ClassValue, StyleValue } from 'vue';
 import ChevronDown12Regular from "@fluentui/svg-icons/icons/chevron_down_12_regular.svg?component";
 
-const { class: className, style } = defineProps<{ class?: ClassValue, style?: StyleValue }>();
+const {
+    class: className,
+    style,
+    width,
+    height
+} = defineProps<{
+    class?: ClassValue,
+    style?: StyleValue,
+    width?: number,
+    height?: number
+}>();
 const model = defineModel<T>();
 </script>
 
@@ -27,6 +37,8 @@ $combo-box-padding: 6px 34px 6px 11px;
     position: relative;
 
     select {
+        width: 100%;
+        height: 100%;
         appearance: none;
         padding: $combo-box-padding;
 
