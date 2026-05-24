@@ -115,6 +115,19 @@
                     </SettingsCard>
                     <SettingsCard class="default-setting-expander-item">
                         <template #header>
+                            <h4 id="settings-type-quotes" class="unset">Quotes</h4>
+                        </template>
+                        <template #description>
+                            Filter by quoted status.
+                        </template>
+                        <ComboBox name="quotes" v-model="type.quotes">
+                            <option :value="undefined">Default</option>
+                            <option :value="true">Include</option>
+                            <option :value="false">Exclude</option>
+                        </ComboBox>
+                    </SettingsCard>
+                    <SettingsCard class="default-setting-expander-item">
+                        <template #header>
                             <h4 id="settings-type-media" class="unset">Media</h4>
                         </template>
                         <template #description>
@@ -219,8 +232,9 @@ const toDate = shallowRef<string>();
 
 const type = ref<PostType>({
     replies: undefined,
-    media: undefined,
-    retweets: undefined
+    retweets: undefined,
+    quotes: undefined,
+    media: undefined
 });
 
 let hashChanged = false;
@@ -252,6 +266,9 @@ function getSettings() {
             if (includes.includes("retweets")) {
                 type.value.retweets = true;
             }
+            if (includes.includes("quotes")) {
+                type.value.quotes = true;
+            }
             if (includes.includes("media")) {
                 type.value.media = true;
             }
@@ -263,6 +280,9 @@ function getSettings() {
             }
             if (excludes.includes("retweets")) {
                 type.value.retweets = false;
+            }
+            if (excludes.includes("quotes")) {
+                type.value.quotes = false;
             }
             if (excludes.includes("media")) {
                 type.value.media = false;
@@ -300,6 +320,12 @@ function setSettings() {
     }
     else if (type.value.retweets === false) {
         excludes.push("retweets");
+    }
+    if (type.value.quotes === true) {
+        includes.push("quotes");
+    }
+    else if (type.value.quotes === false) {
+        excludes.push("quotes");
     }
     if (type.value.media === true) {
         includes.push("media");
@@ -341,12 +367,9 @@ async function getPosts(username: string) {
         for await (const post of getTwitterPosts(username, getDateString(fromDate.value), getDateString(toDate.value))) {
             source.push(post);
         }
-        if (sortOrder.value === "newest") {
-            source = source.reverse().sort((a, b) => b.id - a.id);
-        }
-        else {
-            source = source.sort((a, b) => a.id - b.id);
-        }
+        source = sortOrder.value === "newest"
+            ? source.reverse().sort((a, b) => b.id - a.id)
+            : source.sort((a, b) => a.id - b.id);
         const count = Math.max(3, Math.floor(window.innerHeight / 200) * Math.floor((window.innerWidth / 420)));
         posts.value.push(...source.slice(0, count));
         source = source.slice(count);

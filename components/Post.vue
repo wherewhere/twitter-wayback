@@ -32,8 +32,9 @@ import Copy16Regular from "@fluentui/svg-icons/icons/copy_16_regular.svg?compone
 
 export type PostType = {
     replies: boolean | undefined,
+    retweets: boolean | undefined,
+    quotes: boolean | undefined,
     media: boolean | undefined,
-    retweets: boolean | undefined
 };
 
 const { post, type } = defineProps<{
@@ -71,6 +72,7 @@ function changeUrl(content: Element) {
 const hasMedia = shallowRef(false);
 const isReply = shallowRef(false);
 const isRetweet = shallowRef(false);
+const isQuoted = shallowRef(false);
 async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: string }) {
     if (mimetype === "application/json") {
         const html = await fetch(wayback).then(res => res.text());
@@ -88,6 +90,7 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
                     if (data) {
                         isReply.value = !!data.referenced_tweets?.some((tweet: any) => tweet.type === "replied_to");
                         isRetweet.value = !!data.referenced_tweets?.some((tweet: any) => tweet.type === "retweeted");
+                        isQuoted.value = !!data.referenced_tweets?.some((tweet: any) => tweet.type === "quoted");
                         const dateString = data.created_at;
                         if (typeof dateString === "string") {
                             const date = new Date(dateString);
@@ -141,7 +144,7 @@ const isShow = computed(() => {
     function matches(expected: boolean | undefined, actual: boolean) {
         return expected === undefined || expected === actual;
     }
-    return matches(type.replies, isReply.value) && matches(type.retweets, isRetweet.value) && matches(type.media, hasMedia.value);
+    return matches(type.replies, isReply.value) && matches(type.retweets, isRetweet.value) && matches(type.quotes, isQuoted.value) && matches(type.media, hasMedia.value);
 });
 
 function copy() {
