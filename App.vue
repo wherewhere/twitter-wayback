@@ -1,7 +1,7 @@
 <template>
     <div class="stack-vertical" style="row-gap: 8px; align-items: stretch;">
         <header class="header">
-            <div class="stack-horizontal" style="column-gap: 8px; justify-content: space-between;">
+            <div class="stack-horizontal">
                 <input id="username" name="username" v-model="username" type="text" placeholder="wherewhere7"
                     @keyup.enter="() => getPosts(username)" style="flex: 1;" />
                 <button class="icon-button" title="Fetch" @click="() => getPosts(username)"
@@ -458,6 +458,9 @@ section {
         position: fixed;
         left: 8px;
         right: 8px;
+        column-gap: 8px;
+        justify-content: space-between;
+        max-width: calc(100vw - 16px);
     }
 }
 

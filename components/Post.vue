@@ -69,10 +69,10 @@ function changeUrl(content: Element) {
     }
 }
 
-const hasMedia = shallowRef(false);
-const isReply = shallowRef(false);
-const isRetweet = shallowRef(false);
-const isQuoted = shallowRef(false);
+const hasMedia = shallowRef<boolean>();
+const isReply = shallowRef<boolean>();
+const isRetweet = shallowRef<boolean>();
+const isQuoted = shallowRef<boolean>();
 async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: string }) {
     if (mimetype === "application/json") {
         const html = await fetch(wayback).then(res => res.text());
@@ -125,6 +125,7 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
         if (content) {
             changeUrl(content);
             container.value = "tweet-desktop-container";
+            hasMedia.value = !!content.querySelector(".AdaptiveMedia");
             card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
             return true;
         }
@@ -133,6 +134,7 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
             if (content) {
                 changeUrl(content);
                 container.value = "tweet-mobile-container";
+                hasMedia.value = !!content.querySelector("div[aria-label='Image']");
                 card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
                 return true;
             }
@@ -140,11 +142,15 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
     }
 }
 
+function matches(expected: boolean | undefined, actual: boolean | undefined) {
+    return expected === actual || expected === undefined || actual === undefined;
+}
+
 const isShow = computed(() => {
-    function matches(expected: boolean | undefined, actual: boolean) {
-        return expected === undefined || expected === actual;
-    }
-    return matches(type.replies, isReply.value) && matches(type.retweets, isRetweet.value) && matches(type.quotes, isQuoted.value) && matches(type.media, hasMedia.value);
+    return matches(type.replies, isReply.value)
+        && matches(type.retweets, isRetweet.value)
+        && matches(type.quotes, isQuoted.value)
+        && matches(type.media, hasMedia.value);
 });
 
 function copy() {
