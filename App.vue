@@ -461,6 +461,7 @@ section {
         column-gap: 8px;
         justify-content: space-between;
         max-width: calc(100vw - 16px);
+        z-index: 10;
     }
 }
 

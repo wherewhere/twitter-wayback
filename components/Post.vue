@@ -5,7 +5,7 @@
                 {{ post.original }}
             </a>
         </div>
-        <div class="context-menu" :style="style">
+        <div class="context-menu" :style="style" ref="contextMenu">
             <div @click="refresh" role="button">
                 <ArrowClockwise16Regular />
                 Refresh
@@ -24,7 +24,7 @@
 
 <script lang="ts" setup>
 import "../types";
-import { computed, onMounted, shallowRef, useTemplateRef, type StyleValue } from "vue";
+import { computed, nextTick, onMounted, shallowRef, useTemplateRef, type StyleValue } from "vue";
 import type { WaybackItem } from "../helpers/wayback";
 import ArrowClockwise16Regular from "@fluentui/svg-icons/icons/arrow_clockwise_16_regular.svg?component";
 import ArchiveArrowBack16Regular from "@fluentui/svg-icons/icons/archive_arrow_back_16_regular.svg?component";
@@ -43,14 +43,41 @@ const { post, type } = defineProps<{
 }>();
 
 const style = shallowRef<StyleValue>({});
-function contextmenu(event: PointerEvent) {
+const contextMenu = useTemplateRef("contextMenu");
+async function contextmenu(event: MouseEvent) {
     const target = event.target;
     if (target instanceof HTMLDivElement && !getSelection()?.toString()) {
         event.preventDefault();
         style.value = {
             display: "flex",
-            left: `${event.pageX}px`,
-            top: `${event.pageY}px`
+            left: 0,
+            top: 0,
+            visibility: "hidden"
+        };
+        await nextTick();
+
+        const viewportRight = scrollX + innerWidth;
+        const viewportBottom = scrollY + innerHeight;
+
+        let { pageX: left, pageY: top } = event;
+        const { offsetWidth, offsetHeight } = contextMenu.value!;
+
+        if (left + offsetWidth > viewportRight) {
+            left -= offsetWidth;
+        }
+        const maxLeft = viewportRight - offsetWidth;
+        left = Math.max(scrollX, Math.min(left, maxLeft));
+
+        if (top + offsetHeight > viewportBottom) {
+            top -= offsetHeight;
+        }
+        const maxTop = viewportBottom - offsetHeight;
+        top = Math.max(scrollY, Math.min(top, maxTop));
+
+        style.value = {
+            display: "flex",
+            left,
+            top
         };
     }
 }
@@ -314,7 +341,7 @@ onMounted(refresh);
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.2), 0 16px 32px rgba(0, 0, 0, 0.24);
     padding: 2px 0;
     border-radius: colors.$overlay-corner-radius;
-    z-index: 999;
+    z-index: 11;
 
     >a,
     >div[role="button"] {
