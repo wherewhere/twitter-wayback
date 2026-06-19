@@ -248,6 +248,14 @@ function getSettings() {
         const params = new URLSearchParams(hash);
         if (params.has("user")) {
             username.value = params.get("user")!;
+            meta.patch({
+                // Basic SEO
+                title: username.value ? `${username.value} | ${name}` : name,
+
+                // Open Graph
+                ogTitle: username.value || name,
+                ogSiteName: name
+            });
         }
         if (params.has("sort")) {
             sortOrder.value = params.get("sort") as "oldest" | "newest";
