@@ -1,34 +1,67 @@
 <template>
-    <div :class="['container', container]" @contextmenu="contextmenu" v-show="isShow" ref="card">
-        <div style="padding: 12px 16px;">
-            <a :href="post.wayback" target="_blank" rel="noopener noreferrer">
-                {{ post.original }}
-            </a>
-        </div>
-        <div class="context-menu" :style="style" ref="contextMenu">
-            <div @click="refresh" role="button">
-                <ArrowClockwise16Regular />
-                Refresh
+    <div class="container" v-show="isShow" ref="card">
+        <component :is="container">
+            <NodeHost v-if="element" :element="element" />
+            <div v-else style="padding: 12px 16px">
+                <a :href="post.wayback" target="_blank" rel="noopener noreferrer">
+                    {{ post.original }}
+                </a>
             </div>
-            <div @click="copy" role="button">
-                <Copy16Regular />
-                Copy URL
-            </div>
-            <a :href="post.wayback" target="_blank" rel="noopener noreferrer">
-                <ArchiveArrowBack16Regular />
-                Wayback
-            </a>
-        </div>
+        </component>
+        <MenuFlyout :host="card!">
+            <MenuFlyoutItem :icon="ArrowClockwise16Regular" text="Refresh" @click="refresh" />
+            <MenuFlyoutItem :icon="Copy16Regular" text="Copy URL" @click="copy" />
+            <MenuFlyoutItem :icon="ArchiveArrowBack16Regular" text="Wayback" tag="a" :href="post.wayback"
+                target="_blank" rel="noopener noreferrer" />
+            <MenuFlyoutSubItem v-if="usersList.length || mediaList.length" :icon="Save16Regular" text="Save">
+                <MenuFlyoutItem v-for="list in usersList" :icon="Person16Regular" :text="list.username" tag="a"
+                    :title="list.avatar" :href="`https://web.archive.org/save/${list.avatar}`" target="_blank"
+                    rel="noopener noreferrer" />
+                <MenuFlyoutSeparator v-if="usersList.length && mediaList.length" />
+                <MenuFlyoutItem v-for="list in mediaList" :icon="getMediaIcon(list.type)" :text="list.title" tag="a"
+                    :title="list.url" :href="`https://web.archive.org/save/${list.url}`" target="_blank"
+                    rel="noopener noreferrer" />
+            </MenuFlyoutSubItem>
+        </MenuFlyout>
     </div>
 </template>
 
 <script lang="ts" setup>
 import "../types";
-import { computed, nextTick, onMounted, shallowRef, useTemplateRef, type StyleValue } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref, shallowRef, useTemplateRef, type Component } from "vue";
 import type { WaybackItem } from "../helpers/wayback";
+import NodeHost from "./NodeHost.vue";
+import EmptyHost from "./EmptyHost.vue";
+import MenuFlyout from "./MenuFlyout.vue";
+import MenuFlyoutItem from "./MenuFlyoutItem.vue";
+import MenuFlyoutSubItem from "./MenuFlyoutSubItem.vue";
+import MenuFlyoutSeparator from "./MenuFlyoutSeparator.vue";
 import ArrowClockwise16Regular from "@fluentui/svg-icons/icons/arrow_clockwise_16_regular.svg?component";
 import ArchiveArrowBack16Regular from "@fluentui/svg-icons/icons/archive_arrow_back_16_regular.svg?component";
 import Copy16Regular from "@fluentui/svg-icons/icons/copy_16_regular.svg?component";
+import Save16Regular from "@fluentui/svg-icons/icons/save_16_regular.svg?component";
+import Person16Regular from "@fluentui/svg-icons/icons/person_16_regular.svg?component";
+import Image16Regular from "@fluentui/svg-icons/icons/image_16_regular.svg?component";
+import Video16Regular from "@fluentui/svg-icons/icons/video_16_regular.svg?component";
+import Gif16Regular from "@fluentui/svg-icons/icons/gif_16_regular.svg?component";
+
+const asyncComponentOptions = {
+    loadingComponent: EmptyHost,
+    errorComponent: EmptyHost,
+    delay: 0
+};
+const Twitter = defineAsyncComponent({
+    loader: () => import("./Twitter.vue"),
+    ...asyncComponentOptions
+});
+const TwitterDesktop = defineAsyncComponent({
+    loader: () => import("./TwitterDesktop.vue"),
+    ...asyncComponentOptions
+});
+const TwitterMobile = defineAsyncComponent({
+    loader: () => import("./TwitterMobile.vue"),
+    ...asyncComponentOptions
+});
 
 export type PostType = {
     replies: boolean | undefined,
@@ -42,49 +75,9 @@ const { post, type } = defineProps<{
     type: PostType
 }>();
 
-const style = shallowRef<StyleValue>({});
-const contextMenu = useTemplateRef("contextMenu");
-async function contextmenu(event: MouseEvent) {
-    const target = event.target;
-    if (target instanceof HTMLDivElement && !getSelection()?.toString()) {
-        event.preventDefault();
-        style.value = {
-            display: "flex",
-            left: 0,
-            top: 0,
-            visibility: "hidden"
-        };
-        await nextTick();
-
-        const viewportRight = scrollX + innerWidth;
-        const viewportBottom = scrollY + innerHeight;
-
-        let { pageX: left, pageY: top } = event;
-        const { offsetWidth, offsetHeight } = contextMenu.value!;
-
-        if (left + offsetWidth > viewportRight) {
-            left -= offsetWidth;
-        }
-        const maxLeft = viewportRight - offsetWidth;
-        left = Math.max(scrollX, Math.min(left, maxLeft));
-
-        if (top + offsetHeight > viewportBottom) {
-            top -= offsetHeight;
-        }
-        const maxTop = viewportBottom - offsetHeight;
-        top = Math.max(scrollY, Math.min(top, maxTop));
-
-        style.value = {
-            display: "flex",
-            left,
-            top
-        };
-    }
-}
-
-document.addEventListener("click", () => style.value = {});
-const card = useTemplateRef("card");
-const container = shallowRef<string>();
+const card = useTemplateRef<HTMLElement>("card");
+const element = ref<Node | null>(null);
+const container = shallowRef<Component | string>("div");
 
 function changeUrl(content: Element) {
     const hrefs = content.querySelectorAll("[href]");
@@ -100,6 +93,21 @@ const hasMedia = shallowRef<boolean>();
 const isReply = shallowRef<boolean>();
 const isRetweet = shallowRef<boolean>();
 const isQuoted = shallowRef<boolean>();
+
+const usersList = ref<{ username: string, avatar: string }[]>([]);
+const mediaList = ref<{ type: string, title: string, url: string }[]>([]);
+
+function getMediaIcon(type: string) {
+    switch (type) {
+        case "photo":
+            return Image16Regular;
+        case "video":
+            return Video16Regular;
+        case "animated_gif":
+            return Gif16Regular;
+    }
+}
+
 async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: string }) {
     if (mimetype === "application/json") {
         const html = await fetch(wayback).then(res => res.text());
@@ -107,17 +115,41 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
         const content = document.getElementById("nonjsonview");
         if (content) {
             changeUrl(content);
-            container.value = "tweet-container";
+            container.value = Twitter;
             const json = document.querySelector("#jsonview pre")?.textContent;
             if (json) {
                 try {
-                    const post = JSON.parse(json);
-                    hasMedia.value = !!post.includes?.media?.length;
+                    type twitter = {
+                        data: {
+                            created_at: string,
+                            referenced_tweets?: {
+                                type: string
+                            }[]
+                        },
+                        includes: {
+                            media?: {
+                                type: string,
+                                url: string,
+                                variants?: {
+                                    bit_rate: number,
+                                    url: string
+                                }[]
+                            }[],
+                            users: {
+                                username: string,
+                                profile_image_url: string
+                            }[]
+                        }
+                    }
+                    const post: twitter = JSON.parse(json);
+                    const includes = post.includes;
+                    const media = includes?.media;
+                    hasMedia.value = !!media?.length;
                     const data = post.data;
                     if (data) {
-                        isReply.value = !!data.referenced_tweets?.some((tweet: any) => tweet.type === "replied_to");
-                        isRetweet.value = !!data.referenced_tweets?.some((tweet: any) => tweet.type === "retweeted");
-                        isQuoted.value = !!data.referenced_tweets?.some((tweet: any) => tweet.type === "quoted");
+                        isReply.value = !!data.referenced_tweets?.some(tweet => tweet.type === "replied_to");
+                        isRetweet.value = !!data.referenced_tweets?.some(tweet => tweet.type === "retweeted");
+                        isQuoted.value = !!data.referenced_tweets?.some(tweet => tweet.type === "quoted");
                         const dateString = data.created_at;
                         if (typeof dateString === "string") {
                             const date = new Date(dateString);
@@ -138,10 +170,50 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
                             }
                         }
                     }
+                    const users = includes?.users;
+                    if (Array.isArray(users)) {
+                        for (const item of users) {
+                            usersList.value.push({
+                                username: item.username,
+                                avatar: item.profile_image_url
+                            });
+                        }
+                    }
+                    if (Array.isArray(media)) {
+                        const count = {
+                            photo: 0,
+                            video: 0
+                        };
+                        for (const item of media) {
+                            switch (item.type) {
+                                case "photo":
+                                    mediaList.value.push({
+                                        type: "photo",
+                                        title: `Photo ${++count.photo}`,
+                                        url: item.url
+                                    });
+                                    break;
+                                case "video":
+                                case "animated_gif":
+                                    const variants = item.variants;
+                                    if (Array.isArray(variants)) {
+                                        const variant = variants.sort((a, b) => b.bit_rate - a.bit_rate)[0];
+                                        if (variant) {
+                                            mediaList.value.push({
+                                                type: item.type,
+                                                title: `${item.type === "video" ? "Video" : "GIF"} ${++count.video}`,
+                                                url: variant.url
+                                            });
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                    }
                 }
                 catch { }
             }
-            card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
+            element.value = content;
             return true;
         }
     }
@@ -151,18 +223,18 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
         const content = document.querySelector(".original-permalink-page");
         if (content) {
             changeUrl(content);
-            container.value = "tweet-desktop-container";
+            container.value = TwitterDesktop;
             hasMedia.value = !!content.querySelector(".AdaptiveMedia");
-            card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
+            element.value = content;
             return true;
         }
         else {
             const content = document.querySelector("main");
             if (content) {
                 changeUrl(content);
-                container.value = "tweet-mobile-container";
+                container.value = TwitterMobile;
                 hasMedia.value = !!content.querySelector("div[aria-label='Image']");
-                card.value!.firstElementChild?.replaceWith(content.cloneNode(true));
+                element.value = content;
                 return true;
             }
         }
@@ -227,9 +299,11 @@ onMounted(refresh);
 
 <style lang="scss" scoped>
 @use "../styles/colors.scss";
-@use "../styles/twitter" as *;
-@use "../styles/twitter_mobile" as *;
-@use "../styles/twitter_desktop" as *;
+
+$menu-flyout-item-foreground: colors.$text-fill-color-primary;
+$menu-flyout-item-foreground-pointer-over: colors.$text-fill-color-primary;
+$menu-flyout-item-foreground-pressed: colors.$text-fill-color-primary;
+$menu-flyout-item-foreground-disabled: colors.$text-fill-color-disabled;
 
 .container {
     flex: 1;
@@ -248,137 +322,29 @@ onMounted(refresh);
     word-wrap: break-word;
 }
 
-.tweet-container {
-    padding: 12px 16px;
+a.menu-flyout-item {
+    color: $menu-flyout-item-foreground;
 
-    :deep() {
-        @include twitter();
+    &:not(:disabled):hover {
+        color: $menu-flyout-item-foreground-pointer-over;
     }
-}
 
-.tweet-desktop-container {
-    :deep() {
-        @include twitter-desktop();
-
-        .TweetArrows {
-            display: none;
-        }
-
-        .AdaptiveMedia-photoContainer {
-            display: flex;
-            align-items: center;
-
-            >img {
-                top: auto !important;
-            }
-        }
-
-        .permalink-header {
-            &:has(>.follow-bar:first-child) {
-                flex-direction: row-reverse;
-            }
-
-            .account-group>.fullname {
-                color: #14171a;
-                display: flex;
-                font-size: 18px;
-                font-weight: 700;
-                line-height: 24px;
-                max-width: 32ch;
-
-                .Icon {
-                    padding-left: 4px;
-                }
-
-                .Icon--verified {
-                    font-size: 1.2em;
-                }
-            }
-
-            .time {
-                display: none;
-            }
-        }
-
-        .IconTextContainer {
-            display: inline-block;
-        }
-
-        .permalink {
-            margin-bottom: 0;
-            border-radius: inherit;
-
-            .permalink-tweet-container .tweet {
-                border-radius: colors.$overlay-corner-radius colors.$overlay-corner-radius 0 0;
-            }
-
-            &:has(.permalink-replies.hidden) {
-                .permalink-tweet-container .tweet {
-                    border-radius: colors.$overlay-corner-radius;
-                }
-            }
-        }
+    &:not(:disabled):active {
+        color: $menu-flyout-item-foreground-pressed;
     }
-}
 
-.tweet-mobile-container {
-    :deep() {
-        @include twitter-mobile();
-
-        .r-o52ifk {
-            display: none;
-        }
+    &:not(:disabled):focus {
+        color: $menu-flyout-item-foreground;
     }
-}
 
-.context-menu {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    background-color: colors.$solid-background-fill-color-tertiary;
-    min-width: 96px;
-    min-height: 32px;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2), 0 16px 32px rgba(0, 0, 0, 0.24);
-    padding: 2px 0;
-    border-radius: colors.$overlay-corner-radius;
-    z-index: 11;
+    &:disabled {
+        color: $menu-flyout-item-foreground-disabled;
+    }
 
-    >a,
-    >div[role="button"] {
-        display: flex;
-        align-items: center;
-        background-color: transparent;
-        color: colors.$text-fill-color-primary;
-        fill: currentColor;
-        font-size: colors.$content-control-font-size;
-        border-radius: colors.$control-corner-radius;
-        padding: 8px 11px;
-        margin: 2px 4px;
+    &:hover,
+    &:active,
+    &:focus {
         text-decoration: none;
-        white-space: nowrap;
-        cursor: pointer;
-
-        &:hover,
-        &:active,
-        &:focus {
-            color: colors.$text-fill-color-primary;
-            text-decoration: none;
-        }
-
-        &:hover {
-            background-color: colors.$solid-background-fill-color-secondary;
-        }
-
-        &:active {
-            background-color: colors.$solid-background-fill-color-tertiary;
-        }
-
-        >svg:first-child {
-            margin-right: 12px;
-            margin-top: -1px;
-            width: 16px;
-            height: 16px;
-        }
     }
 }
 </style>

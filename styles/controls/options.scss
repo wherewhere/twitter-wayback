@@ -1,0 +1,69 @@
+@use "../colors" as *;
+
+$combobox-item-foreground: $text-fill-color-primary;
+$combobox-item-foreground-pressed: $text-fill-color-secondary;
+$combobox-item-foreground-pointer-over: $text-fill-color-primary;
+$combobox-item-foreground-disabled: $text-fill-color-disabled;
+$combobox-item-foreground-selected: $text-fill-color-primary;
+$combobox-item-foreground-selected-unfocused: $text-fill-color-primary;
+$combobox-item-foreground-selected-pressed: $text-fill-color-secondary;
+$combobox-item-foreground-selected-pointer-over: $text-fill-color-primary;
+$combobox-item-foreground-selected-disabled: $text-fill-color-disabled;
+$combobox-item-background: $subtle-fill-color-transparent;
+$combobox-item-background-pressed: $subtle-fill-color-tertiary;
+$combobox-item-background-pointer-over: $subtle-fill-color-secondary;
+$combobox-item-background-disabled: $subtle-fill-color-disabled;
+$combobox-item-background-selected: $subtle-fill-color-secondary;
+$combobox-item-background-selected-unfocused: $subtle-fill-color-tertiary;
+$combobox-item-background-selected-pressed: $subtle-fill-color-secondary;
+$combobox-item-background-selected-pointer-over: $subtle-fill-color-tertiary;
+$combobox-item-background-selected-disabled: $subtle-fill-color-secondary;
+
+$combobox-item-theme-padding: 6px 11px;
+$combobox-item-corner-radius: 3px;
+
+option {
+    padding: $combobox-item-theme-padding;
+    color: $combobox-item-foreground;
+    background-color: $combobox-item-background;
+    font-family: $content-control-theme-font-family;
+    font-size: $content-control-font-size;
+    line-height: $content-control-line-height;
+    border-radius: $combobox-item-corner-radius;
+    margin: 5px 2px;
+
+    &:not(:disabled):hover {
+        color: $combobox-item-foreground-pointer-over;
+        background-color: $combobox-item-background-pointer-over;
+    }
+
+    &:not(:disabled):active {
+        color: $combobox-item-foreground-pressed;
+        background-color: $combobox-item-background-pressed;
+    }
+
+    &:disabled {
+        color: $combobox-item-foreground-disabled;
+        background-color: $combobox-item-background-disabled;
+    }
+
+    &:not(:disabled):checked {
+        color: $combobox-item-foreground-selected;
+        background-color: $combobox-item-background-selected;
+    }
+
+    &:not(:disabled):checked:hover {
+        color: $combobox-item-foreground-selected-pointer-over;
+        background-color: $combobox-item-background-selected-pointer-over;
+    }
+
+    &:not(:disabled):checked:active {
+        color: $combobox-item-foreground-selected-pressed;
+        background-color: $combobox-item-background-selected-pressed;
+    }
+
+    &:disabled:checked {
+        color: $combobox-item-foreground-selected-disabled;
+        background-color: $combobox-item-background-selected-disabled;
+    }
+}

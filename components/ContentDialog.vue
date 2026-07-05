@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useTemplateRef } from 'vue';
+import { useTemplateRef } from "vue";
 
 type ContentDialogResult = "None" | "Primary" | "Secondary";
 const {
