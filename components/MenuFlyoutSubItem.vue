@@ -1,20 +1,20 @@
 <template>
     <div class="menu-flyout-sub-item" ref="flyout">
-        <div class="root" @click="click">
+        <div class="root">
             <component v-if="icon" class="icon-root" :is="icon" />
             <span class="text-block">{{ text }}</span>
             <ChevronRight12Regular class="sub-item-chevron" />
         </div>
-        <MenuFlyoutPresenter class="sub-menu" :style="style" ref="presenter">
+        <MenuFlyoutPresenter class="sub-menu" ref="presenter" v-check-solt="$slots.default">
             <slot></slot>
         </MenuFlyoutPresenter>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, shallowRef, useSlots, useTemplateRef, type Component, type CSSProperties } from "vue";
+import { onMounted, useTemplateRef, type Component } from "vue";
 import { anchorPositioningAsync, isAnchorNameSupported } from "../helpers/polyfills";
-import { isSlot } from "../directives/checkSolt";
+import vCheckSolt from "../directives/checkSolt";
 import ChevronRight12Regular from "@fluentui/svg-icons/icons/chevron_right_12_regular.svg?component";
 import MenuFlyoutPresenter from "./MenuFlyoutPresenter.vue";
 
@@ -23,46 +23,16 @@ defineProps<{
     text?: string
 }>();
 
-const slots = useSlots();
-const style = shallowRef<CSSProperties>({ display: "none" });
-
-function click(event: PointerEvent) {
-    event.stopPropagation();
-    style.value.display === "none" ? pointerenter(event) : pointerleave(event);
-}
-
-function pointerenter(event: PointerEvent) {
-    event.preventDefault();
-    if (isSlot(slots.default)) {
-        style.value = {
-            display: "flex"
-        };
-    }
-}
-
-function hide() {
-    style.value = {
-        display: "none"
-    };
-}
-
-function pointerleave(event: PointerEvent) {
-    event.preventDefault();
-    hide();
-}
-
 const flyout = useTemplateRef("flyout");
 const presenter = useTemplateRef("presenter");
 
 onMounted(() => {
-    document.addEventListener("click", hide);
     if (!isAnchorNameSupported) {
         anchorPositioningAsync({
             elements: [flyout.value!, presenter.value!.$el]
         });
     }
 });
-onUnmounted(() => document.removeEventListener("click", hide));
 </script>
 
 <style lang="scss" scoped>
@@ -144,10 +114,15 @@ $menu-flyout-item-theme-padding: 8px 11px;
     }
 
     .sub-menu {
+        display: none;
         position-anchor: --menu-flyout-sub-item;
         position-area: span-block-end inline-end;
         position-try-order: most-block-size;
         position-try-fallbacks: span-block-start inline-end, span-block-end inline-start, span-block-start inline-start;
+    }
+
+    &:hover .sub-menu {
+        display: flex;
     }
 }
 </style>

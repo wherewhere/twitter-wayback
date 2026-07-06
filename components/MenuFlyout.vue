@@ -11,7 +11,7 @@ import { onMounted, onUnmounted, shallowRef, useTemplateRef, watch, type StyleVa
 import { anchorPositioningAsync, isAnchorNameSupported } from "../helpers/polyfills";
 import MenuFlyoutPresenter from "./MenuFlyoutPresenter.vue";
 
-const { host } = defineProps<{ host: HTMLElement }>();
+const { host, checker } = defineProps<{ host: HTMLElement, checker: (target: EventTarget | null) => boolean }>();
 watch(
     () => host,
     (newHost, oldHost) => {
@@ -23,8 +23,7 @@ watch(
 
 const style = shallowRef<StyleValue>({});
 async function contextmenu(event: MouseEvent) {
-    const target = event.target;
-    if (target instanceof HTMLDivElement && !getSelection()?.toString()) {
+    if (checker(event.target)) {
         event.preventDefault();
         style.value = {
             display: "block",
@@ -38,22 +37,22 @@ function hide() {
     style.value = {};
 }
 
-const flyout = useTemplateRef("flyout");
-const presenter = useTemplateRef("presenter");
-
 onMounted(() => {
     host?.addEventListener("contextmenu", contextmenu);
     document.addEventListener("click", hide);
-    if (!isAnchorNameSupported) {
-        anchorPositioningAsync({
-            elements: [flyout.value!, presenter.value!.$el]
-        });
-    }
 });
 onUnmounted(() => {
     host?.removeEventListener("contextmenu", contextmenu);
     document.removeEventListener("click", hide);
 });
+
+if (!isAnchorNameSupported) {
+    const flyout = useTemplateRef("flyout");
+    const presenter = useTemplateRef("presenter");
+    onMounted(() => anchorPositioningAsync({
+        elements: [flyout.value!, presenter.value!.$el]
+    }));
+}
 </script>
 
 <style lang="scss" scoped>

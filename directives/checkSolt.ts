@@ -5,18 +5,15 @@ export function isSlot(solt?: Slot) {
         return false;
     }
     else if (typeof solt === "function") {
-        let value = solt();
+        const value = solt();
         if (value instanceof Array) {
             const result = value.some(x => {
                 if (typeof x === "object") {
                     if (typeof x.type === "symbol") {
-                        const child = x.children;
-                        if (typeof child === "string" || child instanceof Array) {
-                            return !!child.length;
-                        }
-                        else {
-                            return !!child;
-                        }
+                        const children = x.children;
+                        return children === "v-if" ? false
+                            : typeof children === "string" || children instanceof Array ? !!children.length
+                                : !!children;
                     }
                     else {
                         return true;

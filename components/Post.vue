@@ -8,7 +8,7 @@
                 </a>
             </div>
         </component>
-        <MenuFlyout :host="card!">
+        <MenuFlyout :host="card!" :checker="checker">
             <MenuFlyoutItem :icon="ArrowClockwise16Regular" text="Refresh" @click="refresh" />
             <MenuFlyoutItem :icon="Copy16Regular" text="Copy URL" @click="copy" />
             <MenuFlyoutItem :icon="ArchiveArrowBack16Regular" text="Wayback" tag="a" :href="post.wayback"
@@ -45,22 +45,17 @@ import Image16Regular from "@fluentui/svg-icons/icons/image_16_regular.svg?compo
 import Video16Regular from "@fluentui/svg-icons/icons/video_16_regular.svg?component";
 import Gif16Regular from "@fluentui/svg-icons/icons/gif_16_regular.svg?component";
 
-const asyncComponentOptions = {
-    loadingComponent: EmptyHost,
-    errorComponent: EmptyHost,
-    delay: 0
-};
 const Twitter = defineAsyncComponent({
     loader: () => import("./Twitter.vue"),
-    ...asyncComponentOptions
+    loadingComponent: EmptyHost
 });
 const TwitterDesktop = defineAsyncComponent({
     loader: () => import("./TwitterDesktop.vue"),
-    ...asyncComponentOptions
+    loadingComponent: EmptyHost
 });
 const TwitterMobile = defineAsyncComponent({
     loader: () => import("./TwitterMobile.vue"),
-    ...asyncComponentOptions
+    loadingComponent: EmptyHost
 });
 
 export type PostType = {
@@ -109,6 +104,8 @@ function getMediaIcon(type: string) {
 }
 
 async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: string }) {
+    usersList.value = [];
+    mediaList.value = [];
     if (mimetype === "application/json") {
         const html = await fetch(wayback).then(res => res.text());
         const document = new DOMParser().parseFromString(html, "text/html");
@@ -180,16 +177,13 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
                         }
                     }
                     if (Array.isArray(media)) {
-                        const count = {
-                            photo: 0,
-                            video: 0
-                        };
+                        let count = 0;
                         for (const item of media) {
                             switch (item.type) {
                                 case "photo":
                                     mediaList.value.push({
                                         type: "photo",
-                                        title: `Photo ${++count.photo}`,
+                                        title: `Photo ${++count}`,
                                         url: item.url
                                     });
                                     break;
@@ -201,7 +195,7 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
                                         if (variant) {
                                             mediaList.value.push({
                                                 type: item.type,
-                                                title: `${item.type === "video" ? "Video" : "GIF"} ${++count.video}`,
+                                                title: `${item.type === "video" ? "Video" : "GIF"} ${++count}`,
                                                 url: variant.url
                                             });
                                         }
@@ -292,6 +286,10 @@ async function refresh() {
     else {
         getCardAsync(post);
     }
+}
+
+function checker(target: EventTarget | null) {
+    return target instanceof HTMLDivElement && !getSelection()?.toString();
 }
 
 onMounted(refresh);
