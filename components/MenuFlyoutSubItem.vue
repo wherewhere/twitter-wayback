@@ -1,6 +1,6 @@
 <template>
     <div class="menu-flyout-sub-item" ref="flyout">
-        <div class="root">
+        <div class="root" @click="click">
             <component v-if="icon" class="icon-root" :is="icon" />
             <span class="text-block">{{ text }}</span>
             <ChevronRight12Regular class="sub-item-chevron" />
@@ -25,6 +25,10 @@ defineProps<{
 
 const flyout = useTemplateRef("flyout");
 const presenter = useTemplateRef("presenter");
+
+function click(event: PointerEvent) {
+    event.stopPropagation();
+}
 
 onMounted(() => {
     if (!isAnchorNameSupported) {
