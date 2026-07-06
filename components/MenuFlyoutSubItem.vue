@@ -122,7 +122,14 @@ $menu-flyout-item-theme-padding: 8px 11px;
         position-anchor: --menu-flyout-sub-item;
         position-area: span-block-end inline-end;
         position-try-order: most-block-size;
-        position-try-fallbacks: span-block-start inline-end, span-block-end inline-start, span-block-start inline-start;
+        position-try-fallbacks:
+            span-block-start inline-end,
+            span-block-end inline-start,
+            span-block-start inline-start,
+            span-right bottom,
+            span-left bottom,
+            span-right top,
+            span-left top;
     }
 
     &:hover .sub-menu {

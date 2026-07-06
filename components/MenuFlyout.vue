@@ -65,7 +65,10 @@ if (!isAnchorNameSupported) {
         position-anchor: --menu-flyout;
         position-area: span-block-end inline-end;
         position-try-order: most-block-size;
-        position-try-fallbacks: span-block-start inline-end, span-block-end inline-start, span-block-start inline-start;
+        position-try-fallbacks:
+            span-block-start inline-end,
+            span-block-end inline-start,
+            span-block-start inline-start;
     }
 }
 </style>
