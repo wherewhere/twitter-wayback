@@ -31,6 +31,7 @@ option {
     line-height: $content-control-line-height;
     border-radius: $combobox-item-corner-radius;
     margin: 5px 2px;
+    transition: background-color $control-faster-animation-duration ease-in-out;
 
     &:not(:disabled):hover {
         color: $combobox-item-foreground-pointer-over;

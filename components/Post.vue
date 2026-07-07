@@ -19,7 +19,7 @@
                     rel="noopener noreferrer" />
                 <MenuFlyoutSeparator v-if="usersList.length && mediaList.length" />
                 <MenuFlyoutItem v-for="list in mediaList" :icon="getMediaIcon(list.type)" :text="list.title" tag="a"
-                    :title="list.url" :href="`https://web.archive.org/save/${list.url}`" target="_blank"
+                    :title="list.url" :href="`https://web.archive.org/save/${list.url}?name=orig&format=jpg`" target="_blank"
                     rel="noopener noreferrer" />
             </MenuFlyoutSubItem>
         </MenuFlyout>

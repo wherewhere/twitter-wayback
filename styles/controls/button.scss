@@ -42,6 +42,7 @@ select {
     font-family: $content-control-theme-font-family;
     font-size: $content-control-font-size;
     line-height: $content-control-line-height;
+    transition: background-color $control-faster-animation-duration ease-in-out;
 
     &:not(:disabled):hover {
         color: $button-foreground-pointer-over;

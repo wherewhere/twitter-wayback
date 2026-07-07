@@ -40,7 +40,7 @@ $combobox-item-pill-width: 3px;
 $combobox-item-pill-min-scale: 0.625;
 $combobox-item-pill-corner-radius: 1.5px;
 
-$combobox-item-scale-animation-duration: 0.167s;
+$combobox-item-scale-animation-duration: colors.$control-fast-animation-duration;
 
 $combobox-padding: 6px 34px 6px 11px;
 $combobox-dropdown-border-thickness: 1px;
@@ -74,6 +74,7 @@ $combobox-dropdown-button-background-corner-radius: 4px;
             }
 
             &::picker(select) {
+                //opacity: 0;
                 appearance: base-select;
                 color: $combobox-dropdown-foreground;
                 background: $combobox-dropdown-background;
@@ -81,6 +82,15 @@ $combobox-dropdown-button-background-corner-radius: 4px;
                 border-radius: colors.$overlay-corner-radius;
                 padding: $combobox-dropdown-content-margin;
                 box-shadow: 0 0 16px rgba(0, 0, 0, .14);
+                transition: opacity colors.$control-faster-animation-duration linear;
+
+                //&:popover-open {
+                //    opacity: 1;
+
+                //    @starting-style {
+                //        opacity: 0;
+                //    }
+                //}
             }
 
             :deep() option {
@@ -95,7 +105,7 @@ $combobox-dropdown-button-background-corner-radius: 4px;
                     width: $combobox-item-pill-width;
                     background: $combobox-item-pill-fill;
                     border-radius: $combobox-item-pill-corner-radius;
-                    transition: height $combobox-item-scale-animation-duration cubic-bezier(0, 0, 0, 1);
+                    transition: height $combobox-item-scale-animation-duration cubic-bezier(colors.$control-fast-out-slow-in-key-spline);
                 }
 
                 &:not(:disabled):active {

@@ -39,6 +39,7 @@ $settings-expander-item-padding: 8px 44px 8px 58px;
         background: colors.$card-background-fill-color-default;
         color: colors.$text-fill-color-primary;
         border: expander.$expander-header-border-thickness solid colors.$card-stroke-color-default;
+        transition: background-color colors.$control-faster-animation-duration ease-in-out;
 
         .content-presenter {
             flex: 1;

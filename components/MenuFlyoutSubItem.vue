@@ -1,18 +1,18 @@
 <template>
-    <div class="menu-flyout-sub-item" ref="flyout">
+    <div class="menu-flyout-sub-item" ref="flyout" @pointerenter="pointerenter" @pointerleave="pointerleave">
         <div class="root" @click="click">
             <component v-if="icon" class="icon-root" :is="icon" />
             <span class="text-block">{{ text }}</span>
             <ChevronRight12Regular class="sub-item-chevron" />
         </div>
-        <MenuFlyoutPresenter class="sub-menu" ref="presenter" v-check-solt="$slots.default">
+        <MenuFlyoutPresenter class="sub-menu" :class="{ open }" ref="presenter" v-check-solt="$slots.default">
             <slot></slot>
         </MenuFlyoutPresenter>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, useTemplateRef, type Component } from "vue";
+import { onMounted, onUnmounted, shallowRef, useTemplateRef, type Component } from "vue";
 import { anchorPositioningAsync, isAnchorNameSupported } from "../helpers/polyfills";
 import vCheckSolt from "../directives/checkSolt";
 import ChevronRight12Regular from "@fluentui/svg-icons/icons/chevron_right_12_regular.svg?component";
@@ -23,20 +23,53 @@ defineProps<{
     text?: string
 }>();
 
-const flyout = useTemplateRef("flyout");
-const presenter = useTemplateRef("presenter");
-
+const open = shallowRef(false);
 function click(event: PointerEvent) {
+    event.preventDefault();
     event.stopPropagation();
+    open.value = !open.value;
 }
 
-onMounted(() => {
-    if (!isAnchorNameSupported) {
-        anchorPositioningAsync({
-            elements: [flyout.value!, presenter.value!.$el]
-        });
+let showTimer: number | null = null;
+let hideTimer: number | null = null;
+const defaultMenuShowDelay = 400;
+
+function pointerenter(event: PointerEvent) {
+    event.preventDefault();
+    if (hideTimer !== null) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
     }
-});
+    if (event.pointerType === "mouse" || event.pointerType === "pen") {
+        showTimer = window.setTimeout(() => open.value = true, defaultMenuShowDelay);
+    }
+}
+
+function pointerleave(event: PointerEvent) {
+    event.preventDefault();
+    if (showTimer !== null) {
+        clearTimeout(showTimer);
+        showTimer = null;
+    }
+    if (event.pointerType === "mouse" || event.pointerType === "pen") {
+        hideTimer = window.setTimeout(() => open.value = false, defaultMenuShowDelay);
+    }
+}
+
+function hide() {
+    open.value = false;
+}
+
+onMounted(() => document.addEventListener("click", hide));
+onUnmounted(() => document.removeEventListener("click", hide));
+
+if (!isAnchorNameSupported) {
+    const flyout = useTemplateRef("flyout");
+    const presenter = useTemplateRef("presenter");
+    onMounted(() => anchorPositioningAsync({
+        elements: [flyout.value!, presenter.value!.$el]
+    }));
+}
 </script>
 
 <style lang="scss" scoped>
@@ -65,9 +98,9 @@ $menu-flyout-item-chevron-margin: 0 0 -1px 24px;
 $menu-flyout-item-margin: 2px 4px;
 $menu-flyout-item-theme-padding: 8px 11px;
 
-.menu-flyout-sub-item {
-    anchor-name: --menu-flyout-sub-item;
+$default-menu-show-delay: 400ms;
 
+.menu-flyout-sub-item {
     .root {
         display: flex;
         align-items: center;
@@ -80,6 +113,8 @@ $menu-flyout-item-theme-padding: 8px 11px;
         margin: $menu-flyout-item-margin;
         white-space: nowrap;
         cursor: pointer;
+        transition: background-color colors.$control-faster-animation-duration ease-in-out;
+        anchor-name: --menu-flyout-sub-item;
 
         &:not(:disabled):hover {
             background-color: $menu-flyout-sub-item-background-pointer-over;
@@ -118,22 +153,29 @@ $menu-flyout-item-theme-padding: 8px 11px;
     }
 
     .sub-menu {
+        opacity: 0;
         display: none;
+        transition: opacity colors.$control-faster-animation-duration linear,
+            display colors.$control-faster-animation-duration allow-discrete;
         position-anchor: --menu-flyout-sub-item;
         position-area: span-block-end inline-end;
         position-try-order: most-block-size;
-        position-try-fallbacks:
-            span-block-start inline-end,
+        position-try-fallbacks: span-block-start inline-end,
             span-block-end inline-start,
             span-block-start inline-start,
             span-right bottom,
             span-left bottom,
             span-right top,
             span-left top;
-    }
 
-    &:hover .sub-menu {
-        display: flex;
+        &.open {
+            opacity: 1;
+            display: flex;
+
+            @starting-style {
+                opacity: 0;
+            }
+        }
     }
 }
 </style>

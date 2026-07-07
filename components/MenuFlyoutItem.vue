@@ -50,6 +50,7 @@ a.menu-flyout-item:focus {
     margin: $menu-flyout-item-margin;
     white-space: nowrap;
     cursor: pointer;
+    transition: background-color colors.$control-faster-animation-duration ease-in-out;
 
     &:not(:disabled):hover {
         background-color: $menu-flyout-item-background-pointer-over;

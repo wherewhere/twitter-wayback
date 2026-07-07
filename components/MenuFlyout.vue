@@ -1,6 +1,6 @@
 <template>
     <div class="menu-flyout" :style="style" ref="flyout">
-        <MenuFlyoutPresenter class="menu" ref="presenter">
+        <MenuFlyoutPresenter class="menu" :class="{ open }" ref="presenter">
             <slot></slot>
         </MenuFlyoutPresenter>
     </div>
@@ -21,6 +21,7 @@ watch(
         }
     });
 
+const open = shallowRef(false);
 const style = shallowRef<StyleValue>({});
 async function contextmenu(event: MouseEvent) {
     if (checker(event.target)) {
@@ -30,11 +31,13 @@ async function contextmenu(event: MouseEvent) {
             left: event.clientX,
             top: event.clientY
         };
+        open.value = true;
     }
 }
 
 function hide() {
     style.value = {};
+    open.value = false;
 }
 
 onMounted(() => {
@@ -56,19 +59,34 @@ if (!isAnchorNameSupported) {
 </script>
 
 <style lang="scss" scoped>
+@use "../styles/colors.scss";
+
 .menu-flyout {
     display: none;
     position: fixed;
+    user-select: none;
     anchor-name: --menu-flyout;
 
     .menu {
+        opacity: 0;
+        display: none;
+        transition: opacity colors.$control-faster-animation-duration linear,
+            display colors.$control-faster-animation-duration allow-discrete;
         position-anchor: --menu-flyout;
         position-area: span-block-end inline-end;
         position-try-order: most-block-size;
-        position-try-fallbacks:
-            span-block-start inline-end,
+        position-try-fallbacks: span-block-start inline-end,
             span-block-end inline-start,
             span-block-start inline-start;
+
+        &.open {
+            opacity: 1;
+            display: flex;
+
+            @starting-style {
+                opacity: 0;
+            }
+        }
     }
 }
 </style>
