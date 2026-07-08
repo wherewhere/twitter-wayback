@@ -40,6 +40,14 @@ export default defineConfig({
         rolldownOptions: {
             checks: {
                 pluginTimings: false,
+            },
+            output: {
+                codeSplitting: {
+                    groups: [{
+                        name: "runtime-core",
+                        test: /\/@vue\/runtime-core\/|plugin-vue:/
+                    }]
+                }
             }
         }
     }
