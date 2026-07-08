@@ -19,7 +19,8 @@
                     rel="noopener noreferrer" />
                 <MenuFlyoutSeparator v-if="usersList.length && mediaList.length" />
                 <MenuFlyoutItem v-for="list in mediaList" :icon="getMediaIcon(list.type)" :text="list.title" tag="a"
-                    :title="list.url" :href="`https://web.archive.org/save/${list.url}`" target="_blank" rel="noopener noreferrer" />
+                    :title="list.url" :href="`https://web.archive.org/save/${list.url}`" target="_blank"
+                    rel="noopener noreferrer" />
             </MenuFlyoutSubItem>
         </MenuFlyout>
     </div>
@@ -46,15 +47,18 @@ import Gif16Regular from "@fluentui/svg-icons/icons/gif_16_regular.svg?component
 
 const Twitter = defineAsyncComponent({
     loader: () => import("./Twitter.vue"),
-    loadingComponent: EmptyHost
+    loadingComponent: EmptyHost,
+    delay: 83
 });
 const TwitterDesktop = defineAsyncComponent({
     loader: () => import("./TwitterDesktop.vue"),
-    loadingComponent: EmptyHost
+    loadingComponent: EmptyHost,
+    delay: 83
 });
 const TwitterMobile = defineAsyncComponent({
     loader: () => import("./TwitterMobile.vue"),
-    loadingComponent: EmptyHost
+    loadingComponent: EmptyHost,
+    delay: 83
 });
 
 export type PostType = {

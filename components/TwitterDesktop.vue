@@ -7,8 +7,11 @@
 <style lang="scss" scoped>
 @use "../styles/colors.scss";
 @use "../styles/twitter_desktop" as *;
+@use "../styles/wayback" as *;
 
 .tweet-desktop-container {
+    @include wayback-perfix("twitter-desktop");
+
     :deep() {
         @include twitter-desktop();
 

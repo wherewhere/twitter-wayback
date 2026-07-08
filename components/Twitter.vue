@@ -6,8 +6,10 @@
 
 <style lang="scss" scoped>
 @use "../styles/twitter" as *;
+@use "../styles/wayback" as *;
 
 .tweet-container {
+    @include wayback-perfix("twitter");
     padding: 12px 16px;
 
     :deep() {
