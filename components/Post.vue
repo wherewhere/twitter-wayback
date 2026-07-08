@@ -19,7 +19,7 @@
                     rel="noopener noreferrer" />
                 <MenuFlyoutSeparator v-if="usersList.length && mediaList.length" />
                 <MenuFlyoutItem v-for="list in mediaList" :icon="getMediaIcon(list.type)" :text="list.title" tag="a"
-                    :title="list.url" :href="waybackImage(list.url)" target="_blank" rel="noopener noreferrer" />
+                    :title="list.url" :href="`https://web.archive.org/save/${list.url}`" target="_blank" rel="noopener noreferrer" />
             </MenuFlyoutSubItem>
         </MenuFlyout>
     </div>
@@ -81,14 +81,6 @@ function changeUrl(content: Element) {
             href.setAttribute("href", `https://web.archive.org${original}`);
         }
     }
-}
-
-function waybackImage(url: string) {
-    const index = url.lastIndexOf('.');
-    if (index !== -1) {
-        url = url.substring(0, index);
-    }
-    return `https://web.archive.org/save/${url}?name=orig&format=jpg`;
 }
 
 const hasMedia = shallowRef<boolean>();
@@ -188,10 +180,17 @@ async function getCardAsync({ wayback, mimetype }: { wayback: string, mimetype: 
                         for (const item of media) {
                             switch (item.type) {
                                 case "photo":
+                                    function changeUrl(url: string) {
+                                        const index = url.lastIndexOf('.');
+                                        if (index !== -1) {
+                                            url = url.substring(0, index);
+                                        }
+                                        return `${url}?name=orig&format=jpg`;
+                                    }
                                     mediaList.value.push({
                                         type: "photo",
                                         title: `Photo ${++count}`,
-                                        url: item.url
+                                        url: changeUrl(item.url)
                                     });
                                     break;
                                 case "video":
