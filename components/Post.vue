@@ -15,11 +15,11 @@
                 target="_blank" rel="noopener noreferrer" />
             <MenuFlyoutSubItem v-if="usersList.length || mediaList.length" :icon="Save16Regular" text="Save">
                 <MenuFlyoutItem v-for="list in usersList" :icon="Person16Regular" :text="list.username" tag="a"
-                    :title="list.avatar" :href="`https://web.archive.org/save/${list.avatar}`" target="_blank"
+                    :title="list.avatar" :href="`https://web.archive.org/save/_embed/${list.avatar}`" target="_blank"
                     rel="noopener noreferrer" />
                 <MenuFlyoutSeparator v-if="usersList.length && mediaList.length" />
                 <MenuFlyoutItem v-for="list in mediaList" :icon="getMediaIcon(list.type)" :text="list.title" tag="a"
-                    :title="list.url" :href="`https://web.archive.org/save/${list.url}`" target="_blank"
+                    :title="list.url" :href="`https://web.archive.org/save/_embed/${list.url}`" target="_blank"
                     rel="noopener noreferrer" />
             </MenuFlyoutSubItem>
         </MenuFlyout>

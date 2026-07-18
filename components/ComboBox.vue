@@ -47,6 +47,8 @@ $combobox-dropdown-border-thickness: 1px;
 $combobox-dropdown-content-margin: 0 4px;
 $combobox-dropdown-button-background-corner-radius: 4px;
 
+$max-dropdown-height: 504px;
+
 .combobox {
     position: relative;
 
@@ -62,6 +64,7 @@ $combobox-dropdown-button-background-corner-radius: 4px;
             top: calc(50% - 6px);
             color: $combobox-dropdown-glyph-foreground;
             fill: currentColor;
+            pointer-events: none;
         }
 
         @supports (appearance: base-select) {
@@ -76,6 +79,7 @@ $combobox-dropdown-button-background-corner-radius: 4px;
             &::picker(select) {
                 //opacity: 0;
                 appearance: base-select;
+                max-height: $max-dropdown-height;
                 color: $combobox-dropdown-foreground;
                 background: $combobox-dropdown-background;
                 border: $combobox-dropdown-border-thickness solid $combobox-dropdown-border;

@@ -56,9 +56,6 @@ $settings-expander-item-padding: 8px 44px 8px 58px;
         &:not(:disabled):hover {
             background: colors.$control-fill-color-secondary;
             color: colors.$text-fill-color-primary;
-            border-left: expander.$expander-header-border-thickness solid colors.$control-stroke-color-default;
-            border-top: expander.$expander-header-border-thickness solid colors.$control-stroke-color-default;
-            border-right: expander.$expander-header-border-thickness solid colors.$control-stroke-color-default;
             border-bottom: expander.$expander-header-border-thickness solid colors.$control-stroke-color-secondary;
 
             .expand-collapse-chevron-border {
@@ -70,7 +67,6 @@ $settings-expander-item-padding: 8px 44px 8px 58px;
         &:not(:disabled):active {
             background: colors.$control-fill-color-tertiary;
             color: colors.$text-fill-color-secondary;
-            border: expander.$expander-header-border-thickness solid colors.$card-stroke-color-default;
 
             .expand-collapse-chevron-border {
                 background: expander.$expander-chevron-background;
@@ -81,7 +77,6 @@ $settings-expander-item-padding: 8px 44px 8px 58px;
         &:disabled {
             background: colors.$control-fill-color-disabled;
             color: colors.$text-fill-color-disabled;
-            border: expander.$expander-header-border-thickness solid colors.$card-stroke-color-default;
 
             .expand-collapse-chevron-border {
                 background: expander.$expander-chevron-background;
