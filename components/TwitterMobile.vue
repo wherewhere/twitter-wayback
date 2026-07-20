@@ -1,5 +1,5 @@
 <template>
-    <div class="tweet-container">
+    <div class="tweet-mobile-container">
         <slot></slot>
     </div>
 </template>

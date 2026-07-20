@@ -143,15 +143,11 @@
             </div>
         </ContentDialog>
         <main>
-            <div v-if="isLoading">
-                <svg class="refresh-ring" width="16" height="16" viewBox="0 0 16 16">
-                    <circle class="indeterminate-indicator" cx="8px" cy="8px" r="7px"></circle>
-                </svg>
-            </div>
+            <svg v-if="isLoading" class="refresh-ring" width="16" height="16" viewBox="0 0 16 16">
+                <circle class="indeterminate-indicator" cx="8px" cy="8px" r="7px"></circle>
+            </svg>
             <div v-else-if="posts.length" class="masonry">
-                <div v-for="value in posts">
-                    <Post :post="value" :type="type" />
-                </div>
+                <Post v-for="value in posts" :key="value.id" :post="value" :type="type" />
             </div>
             <output v-else-if="error">
                 Error fetching posts:<br />
@@ -475,10 +471,6 @@ section {
 
 .masonry {
     @include masonry.masonry("420px", "8px", "8px");
-
-    >div {
-        display: flex;
-    }
 }
 
 .icon-button {
