@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import "../types";
 import ChevronDown12Regular from "@fluentui/svg-icons/icons/chevron_down_12_regular.svg?component";
 import ChevronUp12Regular from "@fluentui/svg-icons/icons/chevron_up_12_regular.svg?component";
 

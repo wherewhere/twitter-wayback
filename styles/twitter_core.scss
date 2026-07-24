@@ -1129,7 +1129,9 @@
     @font-face {
         font-family: "edgeicons";
         src: url("https://abs.twimg.com/a/1654726701/font/edge-icons-Regular.eot");
-        src: url("https://abs.twimg.com/a/1654726701/font/edge-icons-Regular.eot#iefix") format("embedded-opentype"), url("https://abs.twimg.com/a/1654726701/font/edge-icons-Regular.woff") format("woff"), url("https://abs.twimg.com/a/1654726701/font/edge-icons-Regular.ttf") format("truetype")
+        src: url("https://abs.twimg.com/a/1654726701/font/edge-icons-Regular.eot#iefix") format("embedded-opentype"),
+            url("https://abs.twimg.com/a/1654726701/font/edge-icons-Regular.woff") format("woff"),
+            url("https://abs.twimg.com/a/1654726701/font/edge-icons-Regular.ttf") format("truetype")
     }
 
     .Icon {

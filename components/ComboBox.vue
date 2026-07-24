@@ -8,6 +8,7 @@
 </template>
 
 <script generic="T" lang="ts" setup>
+import "../types";
 import { ClassValue, StyleValue } from "vue";
 import ChevronDown12Regular from "@fluentui/svg-icons/icons/chevron_down_12_regular.svg?component";
 
@@ -33,14 +34,6 @@ $combobox-dropdown-glyph-foreground-disabled: colors.$text-fill-color-disabled;
 $combobox-dropdown-foreground: colors.$text-fill-color-primary;
 $combobox-dropdown-background: colors.$solid-background-fill-color-tertiary;
 $combobox-dropdown-border: colors.$surface-stroke-color-flyout;
-
-$combobox-item-pill-fill: colors.$accent-fill-color-default;
-$combobox-item-pill-height: 16px;
-$combobox-item-pill-width: 3px;
-$combobox-item-pill-min-scale: 0.625;
-$combobox-item-pill-corner-radius: 1.5px;
-
-$combobox-item-scale-animation-duration: colors.$control-fast-animation-duration;
 
 $combobox-padding: 6px 34px 6px 11px;
 $combobox-dropdown-border-thickness: 1px;
@@ -95,28 +88,6 @@ $max-dropdown-height: 504px;
                 //        opacity: 0;
                 //    }
                 //}
-            }
-
-            :deep() option {
-                position: relative;
-                min-block-size: auto;
-
-                &::checkmark {
-                    content: '';
-                    position: absolute;
-                    left: 0;
-                    height: $combobox-item-pill-height;
-                    width: $combobox-item-pill-width;
-                    background: $combobox-item-pill-fill;
-                    border-radius: $combobox-item-pill-corner-radius;
-                    transition: height $combobox-item-scale-animation-duration cubic-bezier(colors.$control-fast-out-slow-in-key-spline);
-                }
-
-                &:not(:disabled):active {
-                    &::checkmark {
-                        height: $combobox-item-pill-height * $combobox-item-pill-min-scale;
-                    }
-                }
             }
         }
 

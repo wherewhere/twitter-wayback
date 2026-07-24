@@ -41,8 +41,8 @@
                         Choose the order in which posts are displayed.
                     </template>
                     <ComboBox name="sortOrder" v-model="sortOrder">
-                        <option value="oldest">Oldest to Newest</option>
-                        <option value="newest">Newest to Oldest</option>
+                        <ComboBoxItem value="oldest">Oldest to Newest</ComboBoxItem>
+                        <ComboBoxItem value="newest">Newest to Oldest</ComboBoxItem>
                     </ComboBox>
                 </SettingsCard>
                 <SettingsExpander>
@@ -95,9 +95,9 @@
                             Filter by reply status.
                         </template>
                         <ComboBox name="replies" v-model="type.replies">
-                            <option :value="undefined">Default</option>
-                            <option :value="true">Include</option>
-                            <option :value="false">Exclude</option>
+                            <ComboBoxItem :value="undefined">Default</ComboBoxItem>
+                            <ComboBoxItem :value="true">Include</ComboBoxItem>
+                            <ComboBoxItem :value="false">Exclude</ComboBoxItem>
                         </ComboBox>
                     </SettingsCard>
                     <SettingsCard class="default-setting-expander-item">
@@ -108,9 +108,9 @@
                             Filter by retweet status.
                         </template>
                         <ComboBox name="retweets" v-model="type.retweets">
-                            <option :value="undefined">Default</option>
-                            <option :value="true">Include</option>
-                            <option :value="false">Exclude</option>
+                            <ComboBoxItem :value="undefined">Default</ComboBoxItem>
+                            <ComboBoxItem :value="true">Include</ComboBoxItem>
+                            <ComboBoxItem :value="false">Exclude</ComboBoxItem>
                         </ComboBox>
                     </SettingsCard>
                     <SettingsCard class="default-setting-expander-item">
@@ -121,9 +121,9 @@
                             Filter by quoted status.
                         </template>
                         <ComboBox name="quotes" v-model="type.quotes">
-                            <option :value="undefined">Default</option>
-                            <option :value="true">Include</option>
-                            <option :value="false">Exclude</option>
+                            <ComboBoxItem :value="undefined">Default</ComboBoxItem>
+                            <ComboBoxItem :value="true">Include</ComboBoxItem>
+                            <ComboBoxItem :value="false">Exclude</ComboBoxItem>
                         </ComboBox>
                     </SettingsCard>
                     <SettingsCard class="default-setting-expander-item">
@@ -134,9 +134,9 @@
                             Filter by media status.
                         </template>
                         <ComboBox name="media" v-model="type.media">
-                            <option :value="undefined">Default</option>
-                            <option :value="true">Include</option>
-                            <option :value="false">Exclude</option>
+                            <ComboBoxItem :value="undefined">Default</ComboBoxItem>
+                            <ComboBoxItem :value="true">Include</ComboBoxItem>
+                            <ComboBoxItem :value="false">Exclude</ComboBoxItem>
                         </ComboBox>
                     </SettingsCard>
                 </SettingsExpander>
@@ -174,6 +174,7 @@ import ContentDialog from "./components/ContentDialog.vue";
 import SettingsCard from "./components/SettingsCard.vue";
 import SettingsExpander from "./components/SettingsExpander.vue";
 import ComboBox from "./components/ComboBox.vue";
+import ComboBoxItem from "./components/ComboBoxItem.vue";
 import Post from "./components/Post.vue";
 import BackToTop from "./components/BackToTop.vue";
 import ArrowRight16Regular from "@fluentui/svg-icons/icons/arrow_right_16_regular.svg?component";

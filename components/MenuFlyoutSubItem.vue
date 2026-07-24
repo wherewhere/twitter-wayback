@@ -12,6 +12,7 @@
 </template>
 
 <script lang="ts" setup>
+import "../types";
 import { onMounted, onUnmounted, shallowRef, useTemplateRef, type Component } from "vue";
 import { anchorPositioningAsync, isAnchorNameSupported } from "../helpers/polyfills";
 import vCheckSolt from "../directives/checkSolt";

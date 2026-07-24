@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "../colors" as *;
 
 $combobox-item-foreground: $text-fill-color-primary;
@@ -19,13 +20,32 @@ $combobox-item-background-selected-pressed: $subtle-fill-color-secondary;
 $combobox-item-background-selected-pointer-over: $subtle-fill-color-tertiary;
 $combobox-item-background-selected-disabled: $subtle-fill-color-secondary;
 
+$combobox-dropdown-background: $solid-background-fill-color-tertiary;
+
 $combobox-item-theme-padding: 6px 11px;
 $combobox-item-corner-radius: 3px;
+
+@function blend($foreground, $background) {
+    $alpha: color.alpha($foreground);
+    $fg-r: color.channel($foreground, "red", $space: rgb);
+    $fg-g: color.channel($foreground, "green", $space: rgb);
+    $fg-b: color.channel($foreground, "blue", $space: rgb);
+
+    $bg-r: color.channel($background, "red", $space: rgb);
+    $bg-g: color.channel($background, "green", $space: rgb);
+    $bg-b: color.channel($background, "blue", $space: rgb);
+
+    $r: $fg-r * $alpha + $bg-r * (1 - $alpha);
+    $g: $fg-g * $alpha + $bg-g * (1 - $alpha);
+    $b: $fg-b * $alpha + $bg-b * (1 - $alpha);
+
+    @return rgb($r, $g, $b);
+}
 
 option {
     padding: $combobox-item-theme-padding;
     color: $combobox-item-foreground;
-    background-color: $combobox-item-background;
+    background-color: blend($combobox-item-background, $combobox-dropdown-background);
     font-family: $content-control-theme-font-family;
     font-size: $content-control-font-size;
     line-height: $content-control-line-height;
@@ -35,36 +55,36 @@ option {
 
     &:not(:disabled):hover {
         color: $combobox-item-foreground-pointer-over;
-        background-color: $combobox-item-background-pointer-over;
+        background-color: blend($combobox-item-background-pointer-over, $combobox-dropdown-background);
     }
 
     &:not(:disabled):active {
         color: $combobox-item-foreground-pressed;
-        background-color: $combobox-item-background-pressed;
+        background-color: blend($combobox-item-background-pressed, $combobox-dropdown-background);
     }
 
     &:disabled {
         color: $combobox-item-foreground-disabled;
-        background-color: $combobox-item-background-disabled;
+        background-color: blend($combobox-item-background-disabled, $combobox-dropdown-background);
     }
 
     &:not(:disabled):checked {
         color: $combobox-item-foreground-selected;
-        background-color: $combobox-item-background-selected;
+        background-color: blend($combobox-item-background-selected, $combobox-dropdown-background);
     }
 
     &:not(:disabled):checked:hover {
         color: $combobox-item-foreground-selected-pointer-over;
-        background-color: $combobox-item-background-selected-pointer-over;
+        background-color: blend($combobox-item-background-selected-pointer-over, $combobox-dropdown-background);
     }
 
     &:not(:disabled):checked:active {
         color: $combobox-item-foreground-selected-pressed;
-        background-color: $combobox-item-background-selected-pressed;
+        background-color: blend($combobox-item-background-selected-pressed, $combobox-dropdown-background);
     }
 
     &:disabled:checked {
         color: $combobox-item-foreground-selected-disabled;
-        background-color: $combobox-item-background-selected-disabled;
+        background-color: blend($combobox-item-background-selected-disabled, $combobox-dropdown-background);
     }
 }

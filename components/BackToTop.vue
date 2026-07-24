@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts" setup>
+import "../types";
 import { computed, onMounted, shallowRef } from "vue";
 import ArrowUp16Regular from "@fluentui/svg-icons/icons/arrow_up_16_regular.svg?component";
 
